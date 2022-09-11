@@ -1,0 +1,5 @@
+name: SpaceBall
+version: '${project.version}'
+main: cc.spaceball
+api-version: 1.19
+authors: [ Pinont ]

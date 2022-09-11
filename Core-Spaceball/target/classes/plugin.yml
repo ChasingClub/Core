@@ -1,0 +1,5 @@
+name: SpaceBall
+version: '1.0-SNAPSHOT'
+main: cc.spaceball
+api-version: 1.19
+authors: [ Pinont ]
