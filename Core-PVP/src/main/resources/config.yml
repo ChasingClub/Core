@@ -1,0 +1,28 @@
+Webhook: true
+DiscordWebhookURL: "https://discord.com/api/webhooks/1001889150129152150/L6a_4y0kUKtP_OJ-JO2wnP--1ZBduqdhge4EcgAkZgmF-8bevBC7hUBxF9JVvLQDalYy"
+AntiCheatHook: "https://discord.com/api/webhooks/1004005092241965058/pLvqXp0rDHVvoKfoLZGOQfX3h1Jkc6cIOMYMBxuM__1HLSZMStyY2h_3_QDoSVz2zvlA"
+
+deadmsg:
+  - " was slain by "
+  - " took the L to "
+  - " got rekt by "
+  - " got smacked by "
+  - " got BONK by "
+  - " got rip by "
+  - " took an E by "
+  - " was turned to dust by "
+  - " was turned to ash by "
+  - " was melted by "
+  - " was stomped by "
+  -
+wc:
+  16x16:
+    1:
+      schematic: ""
+    2:
+      schematic: ""
+  32x16:
+    1:
+      schematic: ""
+  32x32:
+    schematic: ""

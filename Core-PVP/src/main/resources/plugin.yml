@@ -1,0 +1,99 @@
+name: 'Core'
+version: '${project.version}'
+main: core.server.core.Core
+api-version: 1.19
+authors: [ 'Pinont','ItDragClick' ]
+description: Plugin for main server ChasingClub
+
+commands:
+  spawn:
+    description: go to spawn
+    usage: /spawn
+
+  sudo:
+    description: sudo player
+    usage: /sudo
+
+  map:
+    description: map enable/disable
+    usage: /map
+
+  crash:
+    description: crash player
+    usage: /crash
+
+  kaboom:
+    description: kaboom player
+    usage: /kaboom
+
+  givekit:
+    description: givekit player
+    usage: /givekit
+
+  setkit:
+    description: setkit player
+    usage: /setkit
+
+  duel:
+    description: duel player
+    usage: /duel
+
+  fly:
+    description: fly a player
+    usage: /fly
+    aliases: [fly, flight]
+
+  b:
+    description: enable/disable build mode
+    usage: /build
+    aliases: [b, build]
+
+  gms:
+    description: set gamemode 0
+    usage: /gms
+
+  gmc:
+    description: set gamemode 1
+    usage: /gmc
+
+  gma:
+    description: set gamemode 2
+    usage: /gma
+
+  gmsp:
+    description: set gamemode 3
+    usage: /gmsp
+
+  feed:
+    description: feed player
+    usage: /feed
+
+  heal:
+    description: heal player
+    usage: /heal
+
+  fling:
+    description: fling player
+    usage: /fling
+
+  getkit:
+    description: kit
+    usage: /getkit
+
+  warden:
+    description: start warden chase game
+    usage: /warden
+
+  earape:
+    description: earape player
+    usage: /earape
+
+permissions:
+  ranks.admin:
+    description: "admin"
+    children: [ranks.mod, ranks.jrmod] #idk if it inerhits children from lower children, if so you can remove ranks.jrmod
+  ranks.mod:
+    description: "mod"
+    children: [ranks.jrmod]
+  ranks.jrmod:
+    description: "jrmod"
