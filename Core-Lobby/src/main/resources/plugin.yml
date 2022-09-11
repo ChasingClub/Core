@@ -1,0 +1,73 @@
+name: Core
+version: '${project.version}'
+main: core.itdragclick.Core
+api-version: 1.19
+author: 'ItDragClick'
+description: Custom PRAF Plugin Made by ItDragCLick
+
+commands:
+  test:
+    description: test command
+    usage: /test
+
+  core:
+    description: core command
+    usage: /core
+
+  sudo:
+    description: sudo command
+    usage: /sudo
+
+  spawn:
+    description: go to spawn
+    usage: /spawn
+
+  crash:
+    description: crash a player
+    usage: /crash
+
+  fly:
+    description: fly a player
+    usage: /fly
+    aliases: [fly, flight]
+
+  fling:
+    description: fling a player
+    usage: /fling
+
+  kaboom:
+    description: kaboom a player
+    usage: /kaboom
+
+  b:
+    description: enable/disable build mode
+    usage: /b
+    aliases: [b, build]
+
+  gms:
+    description: set gamemode 0
+    usage: /gms
+
+  gmc:
+    description: set gamemode 1
+    usage: /gmc
+
+  gma:
+    description: set gamemode 2
+    usage: /gma
+
+  gmsp:
+    description: set gamemode 3
+    usage: /gmsp
+
+  feed:
+    description: feed player
+    usage: /feed
+
+  heal:
+    description: heal player
+    usage: /heal
+
+  earape:
+    description: earape player
+    usage: /earape

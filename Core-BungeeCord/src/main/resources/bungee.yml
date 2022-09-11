@@ -1,0 +1,4 @@
+name: Core
+version: '2.5.3-BETA'
+main: core.itdragclick.Core
+author: ItDragClick
