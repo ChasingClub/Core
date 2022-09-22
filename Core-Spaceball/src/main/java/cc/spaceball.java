@@ -22,15 +22,31 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
+import java.io.File;
+
 public class spaceball extends JavaPlugin implements Listener {
 
-    public static String Plname = (ChatColor.YELLOW + "C" + ChatColor.LIGHT_PURPLE + "C" + ChatColor.DARK_GRAY + " » "+ ChatColor.GRAY);
+    public static String Plname = (ChatColor.YELLOW + "C" + ChatColor.LIGHT_PURPLE + "C" + ChatColor.DARK_GRAY + " » " + ChatColor.GRAY);
 
     @Override
     public void onEnable() {
+
+        // Config
+
+        File file = new File(getDataFolder() + File.separator + "config.yml"); //This will get the config file
+
+        if (!file.exists()) { //This will check if the file exist
+            getConfig().options().copyDefaults(true); //function to check the important settings
+            saveConfig(); //saves the config
+            reloadConfig(); //reloads the config
+        }
+
+        // Load Plugin
+
         getServer().getPluginManager().registerEvents(new hopDown(), this);
         getServer().getPluginManager().registerEvents(this, this);
-        Bukkit.getLogger().info(Plname + "Plugin is Started");
+        Bukkit.getLogger().info(Plname + "Plugin Loaded");
+
     }
 
     @Override
@@ -49,7 +65,7 @@ public class spaceball extends JavaPlugin implements Listener {
         if (((entity instanceof Player)) && (projectile.getType() == EntityType.ARROW)) {
             Player player = (Player) entity;
 
-            if (event.getBow().getEnchantmentLevel(Enchantment.SILK_TOUCH) > 0) {
+            if (event.getBow().displayName().equals("BouncingBow")) {
                 if (player.hasPermission("bouncingarrows.use")) {
                     projectile.setMetadata("bouncing", new FixedMetadataValue(this, true));
                 }
@@ -148,7 +164,8 @@ public class spaceball extends JavaPlugin implements Listener {
 
             @Override
             public void run() {
-                if (!projectile.isDead() && projectile.isValid() && !projectile.isOnGround() && projectile.getTicksLived() < 600) aimAtTarget(projectile, target, speed);
+                if (!projectile.isDead() && projectile.isValid() && !projectile.isOnGround() && projectile.getTicksLived() < 600)
+                    aimAtTarget(projectile, target, speed);
             }
         }, 1L);
     }
@@ -164,6 +181,8 @@ public class spaceball extends JavaPlugin implements Listener {
         }, 2L);
     }
 
+
+    // reflection with hit block upward and downward
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onProjectileHitEvent(ProjectileHitEvent event) {
         Projectile projectile = event.getEntity();
@@ -181,14 +200,15 @@ public class spaceball extends JavaPlugin implements Listener {
             Location arrowLocation = projectile.getLocation();
             Block hitBlock = arrowLocation.getBlock();
 
-            BlockFace blockFace = BlockFace.UP;
+            BlockFace blockFaceU = BlockFace.UP;
+//            BlockFace blockFaceN = BlockFace.NORTH;
 
-            if (blockFace != null) {
-                if (blockFace == BlockFace.SELF) {
-                    blockFace = BlockFace.UP;
+            if (blockFaceU != null) {
+                if (blockFaceU == BlockFace.SELF) {
+                    blockFaceU = BlockFace.UP;
                 }
 
-                Vector mirrorDirection = new Vector(blockFace.getModX(), blockFace.getModY(), blockFace.getModZ());
+                Vector mirrorDirection = new Vector(blockFaceU.getModX(), blockFaceU.getModY(), blockFaceU.getModZ());
                 double dotProduct = arrowVelocity.dot(mirrorDirection);
                 mirrorDirection = mirrorDirection.multiply(dotProduct).multiply(2.0D);
 
@@ -207,6 +227,15 @@ public class spaceball extends JavaPlugin implements Listener {
                     // remove old arrow
                     projectile.remove();
                 }
+//            } else if (blockFaceN != null) {
+//                if (blockFaceN == BlockFace.SELF) {
+//                    blockFaceN = BlockFace.NORTH;
+//                }
+//
+//                Vector mirriorDetection = new Vector(blockFaceN.getModX(), blockFaceN.getModY(), blockFaceN.getModZ());
+//                double dotProduct = arrowVelocity.dot(mirriorDetection);
+//                mirriorDetection = mirriorDetection.multiply(dotProduct).multiply(2.0D);
+//            }
             }
         }
     }
