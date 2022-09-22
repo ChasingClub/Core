@@ -164,7 +164,7 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         getServer().getPluginManager().registerEvents(new joinEvent(this), this);
         getServer().getPluginManager().registerEvents(new Bhopping(), this);
         getServer().getPluginManager().registerEvents(new Chat(), this);
-        getServer().getPluginManager().registerEvents(new Respawn(), this);
+        getServer().getPluginManager().registerEvents(new Respawn(this), this);
         getServer().getPluginManager().registerEvents(new heal(), this);
         getServer().getPluginManager().registerEvents(new LeaveClear(), this);
         getServer().getPluginManager().registerEvents(new JoinMessage(), this);
