@@ -1,7 +1,9 @@
 package core.server.core.events;
 
 import core.server.core.Core;
+import static core.server.core.Core.spawn;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
@@ -11,8 +13,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import core.server.core.Cuboid;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 
 public class cancelevent implements Listener {
     @EventHandler
@@ -45,6 +49,27 @@ public class cancelevent implements Listener {
                     return;
                 }
             }
+        }
+    }
+    @EventHandler
+    public void onSlot(InventoryClickEvent e){
+        Player p = (Player) e.getWhoClicked();
+        if(spawn.contains(p.getLocation()) && p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR){
+            e.setCancelled(true);
+        }
+    }
+    @EventHandler
+    public void onSwap(PlayerSwapHandItemsEvent e){
+        Player p = e.getPlayer();
+        if(spawn.contains(p.getLocation()) && p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR){
+            e.setCancelled(true);
+        }
+    }
+    @EventHandler
+    public void onDamage(EntityDamageEvent e){
+        Player p = (Player) e.getEntity();
+        if(spawn.contains(p.getLocation())){
+            e.setCancelled(true);
         }
     }
     @EventHandler

@@ -14,15 +14,11 @@ deadmsg:
   - " was turned to ash by "
   - " was melted by "
   - " was stomped by "
-  -
-wc:
-  16x16:
-    1:
-      schematic: ""
-    2:
-      schematic: ""
-  32x16:
-    1:
-      schematic: ""
-  32x32:
-    schematic: ""
+
+spawn:
+  world: 'world'
+  x: 256
+  y: 176
+  z: 268
+  yaw: 180
+  pitch: 0

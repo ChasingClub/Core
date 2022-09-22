@@ -1,15 +1,18 @@
 package core.server.core;
 
 import core.server.core.command.*;
+import core.server.core.command.core.core;
 import core.server.core.events.*;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -35,8 +38,22 @@ import java.util.*;
 import java.util.List;
 
 import static core.server.core.API.Prefix.SetTeamPrefix;
+import static core.server.core.command.givekit.givekite;
 
 public class Core extends JavaPlugin implements Listener, CommandExecutor {
+    public FileConfiguration config;
+    public File cfile;
+    public String webhookURL;
+    public String webhookURLAC;
+    public String Webhook;
+    public String worldspawn;
+    public double xspawn;
+    public double yspawn;
+    public double zspawn;
+    public float spawnyaw;
+    public float spawnpitch;
+    public Location spawnloc;
+    public static Cuboid spawn = new Cuboid(Bukkit.getServer().getWorld("world"), 281, 199, 280, 230, 161, 232);
     public static HashMap<String, String> anti = new HashMap<String, String>();
     public static ArrayList<String> build = new ArrayList<String>();
     public static HashMap<String, HashMap<String, String>> inviteList = new HashMap<String, HashMap<String, String>>();
@@ -47,6 +64,7 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
     public static HashMap<String, Integer> chatcooldowns = new HashMap<>();
     public static HashMap<String, Integer> cmdcooldowns = new HashMap<>();
     public static HashMap<String, Integer> playerkits = new HashMap<String, Integer>();
+    public static HashMap<String, Boolean> gotkit = new HashMap<>();
     public static HashMap<String,String> duel = new HashMap<String,String>();
     public static HashMap<String,Integer> dueltimer = new HashMap<String,Integer>();
     public static HashMap<String, String> games = new HashMap<String, String>();
@@ -54,27 +72,44 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
     public static HashMap<String, Integer> combatList;
     public static HashMap<String, Integer> bhopcooldown = new HashMap<String, Integer>();
     public static HashMap<String, String> ingame = new HashMap<String, String>();
-    public FileConfiguration config = this.getConfig();
-    public String webhookURL = config.getString("DiscordWebhookURL");
-    public String webhookURLAC = config.getString("AntiCheatHook");
-    public String Webhook = config.getString("Webhook");
+    public void reload() {
+        getServer().getScheduler().cancelTasks(this);
+        cfile = new File(getDataFolder(), "config.yml");
+        config = YamlConfiguration.loadConfiguration(cfile);
+        webhookURL = config.getString("DiscordWebhookURL");
+        webhookURLAC = config.getString("AntiCheatHook");
+        Webhook = config.getString("Webhook");
+        worldspawn = config.getString("spawn.world");
+        xspawn = config.getDouble("spawn.x");
+        yspawn = config.getDouble("spawn.y");
+        zspawn = config.getDouble("spawn.z");
+        spawnyaw = config.getInt("spawn.yaw");
+        spawnpitch = config.getInt("spawn.pitch");
+        spawnloc = new Location(Bukkit.getServer().getWorld(worldspawn), xspawn+0.5, yspawn, zspawn+0.5, spawnyaw, spawnpitch);
+    }
     private ReflectionUtils reflectionUtils;
     private Boolean enableVoidSaving = true;
     public Core plugin;
-
     public static void msgconsole(String message){
         Bukkit.getConsoleSender().sendMessage(message);
     }
     // ENABLED SERVER
     @Override
     public void onEnable() {
+        // Config
+        File file = new File(getDataFolder() + File.separator + "config.yml"); //This will get the config file
+
+        if (!file.exists()){ //This will check if the file exist
+            getConfig().options().copyDefaults(true); //function to check the important settings
+            saveConfig(); //saves the config
+            reloadConfig(); //reloads the config
+        }
+        reload();
         // First Load
         for (Player p : getServer().getOnlinePlayers()){
             kits.put(p,"Default");
             if (p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR){
-                World SessionWorld = Bukkit.getServer().getWorld("world");
-                Location SessionWorldSpawn = new Location(SessionWorld, 64.5, 180, 26.5);
-                p.teleport(SessionWorldSpawn);
+                p.teleport(spawnloc);
                 p.getInventory().clear();
                 GetKitSelect(p);
             }
@@ -92,17 +127,11 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         lore.add("§7Right Click to open kit selector menu!");
         // Set Normal TimeZone
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Bangkok"));
-        // Config
-        File file = new File(getDataFolder() + File.separator + "config.yml"); //This will get the config file
-
-        if (!file.exists()){ //This will check if the file exist
-            getConfig().options().copyDefaults(true); //function to check the important settings
-            saveConfig(); //saves the config
-            reloadConfig(); //reloads the config
-        }
 
         // register Command
-        getCommand("spawn").setExecutor(new spawn());
+        getCommand("spawn").setExecutor(new spawn(this));
+        getCommand("setspawn").setExecutor(new setspawn(this));
+        getCommand("core").setExecutor(new core(this));
         getCommand("getkit").setExecutor(new kits());
         getCommand("feed").setExecutor(new feed());
         getCommand("heal").setExecutor(new health());
@@ -132,7 +161,7 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         getServer().getPluginManager().registerEvents(new dia_to_netherite(), this);
         getServer().getPluginManager().registerEvents(new slotitem(), this);
         getServer().getPluginManager().registerEvents(new canceldrops(), this);
-        getServer().getPluginManager().registerEvents(new joinEvent(), this);
+        getServer().getPluginManager().registerEvents(new joinEvent(this), this);
         getServer().getPluginManager().registerEvents(new Bhopping(), this);
         getServer().getPluginManager().registerEvents(new Chat(), this);
         getServer().getPluginManager().registerEvents(new Respawn(), this);
@@ -174,6 +203,8 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         {
             @Override
             public void run(){
+                GetKit();
+//                System.out.println(gotkit);
                 onDelay();
                 onDelay2();
                 onDelay3();
@@ -193,8 +224,42 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
             @Override
             public void run(){
                 nightvision();
+                for (Player p : Bukkit.getServer().getOnlinePlayers())
+                    if(spawn.contains(p.getLocation())){
+                        p.setFoodLevel(20);
+                        p.setSaturation(20f);
+                    }
             }
-        }.runTaskTimer(this, 0, 100);
+        }.runTaskTimer(this, 0, 40);
+    }
+    public void GetKit(){
+        for(Player p : Bukkit.getServer().getOnlinePlayers()){
+            if(
+               p.getGameMode() != GameMode.CREATIVE &&
+               p.getGameMode() != GameMode.SPECTATOR &&
+               p.getWorld().getName().equals("world") &&
+               !(spawn.contains(p.getLocation()))
+            ){
+                if(!gotkit.get(p.getName())) {
+                    p.getInventory().clear();
+                    p.setFoodLevel(20);
+                    p.setSaturation(20f);
+                    p.setHealth(p.getMaxHealth());
+                    for (PotionEffect effect : p.getActivePotionEffects())
+                        p.removePotionEffect(effect.getType());
+                    givekite(p);
+                    gotkit.put(p.getName(), true);
+                }
+            }
+            if(
+               p.getGameMode() == GameMode.CREATIVE ||
+               p.getGameMode() == GameMode.SPECTATOR ||
+               !p.getWorld().getName().equals("world") ||
+               (spawn.contains(p.getLocation()))
+            ){
+                gotkit.put(p.getName(), false);
+            }
+        }
     }
     // DISABLED SERVER
     @Override

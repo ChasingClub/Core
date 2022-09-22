@@ -6,6 +6,14 @@ authors: [ 'Pinont','ItDragClick' ]
 description: Plugin for main server ChasingClub
 
 commands:
+  setspawn:
+    description: set the spawn
+    usage: /setspawn
+
+  core:
+    description: core
+    usage: /core
+
   spawn:
     description: go to spawn
     usage: /spawn
