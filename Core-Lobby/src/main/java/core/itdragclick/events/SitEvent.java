@@ -4,6 +4,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Stairs;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -60,8 +62,19 @@ public class SitEvent implements Listener {
         }
         Location location = b.getLocation();
         World world = location.getWorld();
-        ArmorStand chair = (ArmorStand) world.spawnEntity(location.subtract(-0.5, 1.1, -0.5), EntityType.ARMOR_STAND);
+        float yaw = 0f;
+        if (b.getBlockData().getAsString().contains("facing=east")){
+            yaw = 90f;
+        }else if (b.getBlockData().getAsString().contains("facing=west")){
+            yaw = -90f;
+        }else if (b.getBlockData().getAsString().contains("facing=south")){
+            yaw = 180f;
+        }else if (b.getBlockData().getAsString().contains("facing=north")){
+            yaw = 0f;
+        }
+        location.setYaw(yaw);
 
+        ArmorStand chair = (ArmorStand) world.spawnEntity(location.subtract(-0.5, 1.1, -0.5), EntityType.ARMOR_STAND);
         chair.setGravity(false);
         chair.setVisible(false);
         chair.setInvulnerable(true);

@@ -1,14 +1,25 @@
 name: 'Core'
-version: '${project.version}'
-main: core.server.core.Core
+version: 1.9.2
+main: chasingclub.server.core.Core
 api-version: 1.19
 authors: [ 'Pinont','ItDragClick' ]
 description: Plugin for main server ChasingClub
+depend:
+  - Vanish
+  - PlaceholderAPI
 
 commands:
   setspawn:
     description: set the spawn
     usage: /setspawn
+
+  enderchest:
+    description: enderchest
+    usage: /enderchest
+    aliases:
+      - enderchest
+      - ec
+      - ender_chest
 
   core:
     description: core

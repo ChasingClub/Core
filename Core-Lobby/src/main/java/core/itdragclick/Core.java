@@ -1,10 +1,9 @@
 package core.itdragclick;
 
-//import core.itdragclick.API.ChairsConfig;
-//import core.itdragclick.API.PlayerSitData;
-//import core.itdragclick.API.SitUtils;
 import core.itdragclick.Commands.*;
 import core.itdragclick.Commands.Core.core;
+import core.itdragclick.Utils.Database;
+import core.itdragclick.Utils.DiscordWebhook;
 import core.itdragclick.events.*;
 import org.bukkit.ChatColor;
 import org.bukkit.*;
@@ -12,16 +11,16 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
@@ -29,39 +28,68 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static core.itdragclick.API.Prefix.SetTeamPrefix;
+import static core.itdragclick.Utils.Utils.PluginName;
+import static core.itdragclick.events.inventory.CraftingSlot;
 
 public class Core extends JavaPlugin implements Listener, CommandExecutor {
+    public static String PLname = PluginName;
+    public FileConfiguration config;
+    public File cfile;
+    public String SQL_username;
+    public String SQL_password;
+    public String SQL_ip;
+    public String SQL_database;
+    public String worldspawn;
+    public double xspawn;
+    public double yspawn;
+    public double zspawn;
+    public float spawnyaw;
+    public float spawnpitch;
+    public Location spawnloc;
     public static HashMap<String, String> anti = new HashMap<>();
     public static Set<UUID> sitting = new HashSet<>();
     public static HashMap<String, Integer> chatcooldowns = new HashMap<>();
     public static HashMap<String, Integer> cmdcooldowns = new HashMap<>();
     public static ArrayList<String> build = new ArrayList<>();
-    public static HashMap<String, Integer> resoruce = new HashMap<>();
     public static Core plugin;
-    public FileConfiguration config = this.getConfig();
-    public String pack = config.getString("pack");
-    public String hash = config.getString("hash");
     public static String Webhook = "true";
     public static String webhookURL = "https://discord.com/api/webhooks/1001889150129152150/L6a_4y0kUKtP_OJ-JO2wnP--1ZBduqdhge4EcgAkZgmF-8bevBC7hUBxF9JVvLQDalYy";
-
+    public void reload() {
+        cfile = new File(getDataFolder(), "config.yml");
+        config = YamlConfiguration.loadConfiguration(cfile);
+        worldspawn = config.getString("spawn.world");
+        xspawn = config.getDouble("spawn.x");
+        yspawn = config.getDouble("spawn.y");
+        zspawn = config.getDouble("spawn.z");
+        spawnyaw = config.getInt("spawn.yaw");
+        spawnpitch = config.getInt("spawn.pitch");
+        SQL_ip = config.getString("database.IP");
+        SQL_username = config.getString("database.username");
+        SQL_password = config.getString("database.password");
+        SQL_database = config.getString("database.database");
+        spawnloc = new Location(Bukkit.getServer().getWorld(worldspawn), xspawn+0.5, yspawn, zspawn+0.5, spawnyaw, spawnpitch);
+    }
     public static void msgconsole(String message){
         Bukkit.getConsoleSender().sendMessage(message);
     }
-    public static String PLname = (ChatColor.YELLOW + "C" + ChatColor.LIGHT_PURPLE + "C" + ChatColor.DARK_GRAY + " » "+ChatColor.GRAY);
     @Override
     public void onEnable() {
-//        createNPC("ItDragClick");
-//        createNPC("Pinont_");
-//        createNPC("RichterYT");
+        File file = new File(getDataFolder() + File.separator + "config.yml"); //This will get the config file
+
+        if (!file.exists()){ //This will check if the file exist
+            getConfig().options().copyDefaults(true); //function to check the important settings
+            saveConfig(); //saves the config
+            reloadConfig(); //reloads the config
+        }
+        reload();
         for (Player p : getServer().getOnlinePlayers()){
             if (p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR){
-                World SessionWorld = Bukkit.getServer().getWorld("Lobby");
-                Location SessionWorldSpawn = new Location(SessionWorld, 100.5, 101, 100.5, 180f, 0f);
-                p.teleport(SessionWorldSpawn);
+                p.teleport(spawnloc);
                 p.getInventory().clear();
                 getserverselect(p);
             }
@@ -71,14 +99,7 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Bangkok"));
         // Add HashMap
         anti.put("8a490d62-98bd-4f57-b4a6-e4738b0beb96", "1");anti.put("0ab56496-71f6-4205-8e16-ec21dd7bfd5e", "2");anti.put("30c8f2de-9dc6-450c-bc31-4c20db77a29b", "3");
-        // Add Arraylist
-        File file = new File(getDataFolder() + File.separator + "config.yml"); //This will get the config file
 
-        if (!file.exists()){ //This will check if the file exist
-            getConfig().options().copyDefaults(true); //function to check the important settings
-            saveConfig(); //saves the config
-            reloadConfig(); //reloads the config
-        }
         // Register Commands
         getCommand("feed").setExecutor(new feed());
         getCommand("heal").setExecutor(new health());
@@ -86,7 +107,9 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         getCommand("gma").setExecutor(new gma());
         getCommand("gms").setExecutor(new gms());
         getCommand("gmsp").setExecutor(new gmsp());
-        getCommand("spawn").setExecutor(new spawn());
+        getCommand("spawn").setExecutor(new spawn(this));
+        getCommand("setspawn").setExecutor(new setspawn(this));
+        getCommand("enderchest").setExecutor(new enderchest());
         getCommand("earape").setExecutor(new earape());
         getCommand("crash").setExecutor(new crash());
         getCommand("b").setExecutor(new build());
@@ -94,16 +117,17 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         getCommand("kaboom").setExecutor(new kaboom());
         getCommand("fly").setExecutor(new fly());
         getCommand("sudo").setExecutor(new sudo());
-        getCommand("core").setExecutor(new core());
+        getCommand("core").setExecutor(new core(this));
         getCommand("test").setExecutor(this);
         // Register Events
         getServer().getPluginManager().registerEvents(new slotitem(), this);
-        getServer().getPluginManager().registerEvents(new onjoin(), this);
+        getServer().getPluginManager().registerEvents(new onjoin(this), this);
         getServer().getPluginManager().registerEvents(new canceldrops(), this);
         getServer().getPluginManager().registerEvents(new LeaveClear(), this);
         getServer().getPluginManager().registerEvents(new JoinMessage(), this);
         getServer().getPluginManager().registerEvents(new cancelevent(), this);
         getServer().getPluginManager().registerEvents(new interactblock(), this);
+        getServer().getPluginManager().registerEvents(new Vanish(), this);
         getServer().getPluginManager().registerEvents(new Respawn(), this);
         getServer().getPluginManager().registerEvents(new BADWords(), this);
         getServer().getPluginManager().registerEvents(new openmenu(), this);
@@ -131,59 +155,67 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
                 getLogger().severe(Arrays.toString(e.getStackTrace()));
             }
         }
-        World world = Bukkit.getServer().getWorld("Lobby");
+        World world = Bukkit.getServer().getWorld("Hub");
         if (world != null) {
             world.setDifficulty(Difficulty.PEACEFUL);
         }
+        Database database = new Database(this);
+        msgconsole(PLname+"database is loading....\n\n");
+        msgconsole(ChatColor.GREEN+"███╗░░░███╗██╗░░░██╗░██████╗░██████╗░██╗░░░░░");
+        msgconsole(ChatColor.GREEN+"████╗░████║╚██╗░██╔╝██╔════╝██╔═══██╗██║░░░░░");
+        msgconsole(ChatColor.GREEN+"██╔████╔██║░╚████╔╝░╚█████╗░██║██╗██║██║░░░░░");
+        msgconsole(ChatColor.GREEN+"██║╚██╔╝██║░░╚██╔╝░░░╚═══██╗╚██████╔╝██║░░░░░");
+        msgconsole(ChatColor.GREEN+"██║░╚═╝░██║░░░██║░░░██████╔╝░╚═██╔═╝░███████╗");
+        msgconsole(ChatColor.GREEN+"╚═╝░░░░░╚═╝░░░╚═╝░░░╚═════╝░░░░╚═╝░░░╚══════╝");
+        msgconsole(ChatColor.YELLOW+"=----------------------------------=");
+        msgconsole(PLname+"Connecting to database.");
+        msgconsole(ChatColor.YELLOW+"=----------------------------------=");
+        try {
+            database.initializeDatabase();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            msgconsole(ChatColor.RED+"Could not initialize database.");
+            msgconsole(ChatColor.YELLOW+"=----------------------------------=");
+        }
+        msgconsole(PLname+"Connected to database.");
+        msgconsole(ChatColor.YELLOW+"=----------------------------------=");
         new BukkitRunnable()
         {
             @Override
             public void run(){
-                adminregion();
-            }
-        }.runTaskTimer(this, 0, 5);
-        new BukkitRunnable()
-        {
-            @Override
-            public void run(){
-//                checktexture();
                 TabList();
                 Chat();
                 CMD();
+                CraftingSlot();
+                for (Player ap : Bukkit.getServer().getOnlinePlayers()){
+                    if(ap.getGameMode() != GameMode.CREATIVE && ap.getGameMode() != GameMode.SPECTATOR){
+                        ap.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 200000, 0, false, false));
+                    }else{
+                        ap.removePotionEffect(PotionEffectType.HUNGER);
+                    }
+                }
             }
         }.runTaskTimer(this, 0, 20);
+        new BukkitRunnable()
+        {
+            @Override
+            public void run(){
+                try {
+                    database.getConnection();
+                    msgconsole(ChatColor.YELLOW+"=----------------------------------=");
+                    msgconsole(PLname+"Reconnecting to database.");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    msgconsole(ChatColor.RED+"Could not initialize database.");
+                    msgconsole(ChatColor.YELLOW+"=----------------------------------=");
+                    return;
+                }
+                msgconsole(PLname+"Reconnected to database.");
+                msgconsole(ChatColor.YELLOW+"=----------------------------------=");
+            }
+        }.runTaskTimer(this, 0L, 12000L);
     }
-//    public Player[] checktexture(){
-//        Player[] players = new Player[Bukkit.getOnlinePlayers().size()];
-//        Bukkit.getOnlinePlayers().toArray(players);
-//        for (Player p : players){
-//            if (p.getResourcePackStatus() == PlayerResourcePackStatusEvent.Status.ACCEPTED){
-//                return players;
-//            }else if (p.getResourcePackStatus() == null){
-//                p.setResourcePack(pack, hash, true);
-//                if (resoruce.containsKey(p.getName())){
-//                    return players;
-//                }
-//                resoruce.put(p.getName(), 3);
-//            }
-//        }
-//        return players;
-//    }
-//    public void onDelay(){
-//        HashMap<String, Integer> temp = new HashMap<>();
-//        for (String plrname : resoruce.keySet()){
-//            int timer = resoruce.get(plrname) - 1;
-//            System.out.println(resoruce);
-//            Player p = Bukkit.getPlayer(plrname);
-//            if (timer == 0 && p != null && p.getResourcePackStatus() == null){
-//                p.kickPlayer("You need to install resource pack.");
-//            }
-//            if (timer > 0){
-//                temp.put(plrname, timer);
-//            }
-//        }
-//        resoruce = temp;
-//    }
+
     public void Chat(){
         HashMap<String, Integer> temp = new HashMap<>();
         for (String plrname : chatcooldowns.keySet()){
@@ -232,15 +264,15 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         return sdf.format(cal.getTime());
     }
-    public void adminregion(){
-        Cuboid cuboid = new Cuboid(Bukkit.getServer().getWorld("Lobby") ,82, 109, 74, 92, 112, 47);
-        for (Player ap : getServer().getOnlinePlayers()){
-            if (cuboid.contains(ap.getLocation()) && !(ap.hasPermission("rank.admin"))){
-                ap.sendMessage(PLname+ChatColor.RED+"You don't have permission to enter this room!");
-                ap.teleport(new Location(Bukkit.getServer().getWorld("Lobby"), 94.5, 109, 51.5, 90f, 0f));
-            }
-        }
-    }
+//    public void adminregion(){
+//        Cuboid cuboid = new Cuboid(Bukkit.getServer().getWorld("Lobby") ,82, 109, 74, 92, 112, 47);
+//        for (Player ap : getServer().getOnlinePlayers()){
+//            if (cuboid.contains(ap.getLocation()) && !(ap.hasPermission("rank.admin"))){
+//                ap.sendMessage(PLname+ChatColor.RED+"You don't have permission to enter this room!");
+//                ap.teleport(new Location(Bukkit.getServer().getWorld("Lobby"), 94.5, 109, 51.5, 90f, 0f));
+//            }
+//        }
+//    }
     @Override
     public void onDisable() {
         // IDK

@@ -22,3 +22,14 @@ spawn:
   z: 268
   yaw: 180
   pitch: 0
+
+database:
+  IP: localhost
+  username: 'username'
+  password: 'password'
+  database: 'database'
+database2:
+  IP: localhost
+  username: 'username'
+  password: 'password'
+  database: 'database'

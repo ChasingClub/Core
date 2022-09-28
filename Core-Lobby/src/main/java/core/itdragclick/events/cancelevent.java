@@ -1,6 +1,7 @@
 package core.itdragclick.events;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
@@ -14,6 +15,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
+import org.bukkit.potion.PotionEffectType;
 
 import static core.itdragclick.Core.build;
 
@@ -22,7 +24,7 @@ public class cancelevent implements Listener {
     public void onDamage(EntityDamageEvent e){
         if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
-            if(p.getWorld() == Bukkit.getWorld("Lobby")){
+            if(p.getWorld() == Bukkit.getWorld("Hub")){
                 e.setCancelled(true);
             }
         }
@@ -35,19 +37,17 @@ public class cancelevent implements Listener {
             e.setCancelled(true);
             return;
         }
-        if(p.getWorld() == Bukkit.getWorld("Lobby")){
-            e.setCancelled(true);
-        }
+        e.setCancelled(true);
     }
-    @EventHandler
-    public void onPotion(EntityPotionEffectEvent e){
-        if (e.getEntity() instanceof Player) {
-            Player p = (Player) e.getEntity();
-            if(p.getWorld() == Bukkit.getWorld("Lobby")){
-                e.setCancelled(true);
-            }
-        }
-    }
+//    @EventHandler
+//    public void onPotion(EntityPotionEffectEvent e){
+//        if (e.getEntity() instanceof Player) {
+//            Player p = (Player) e.getEntity();
+//            if(p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.CREATIVE && e.getNewEffect().getType() != PotionEffectType.HUNGER) {
+//                e.setCancelled(true);
+//            }
+//        }
+//    }
     @EventHandler
     public void onBreak(BlockBreakEvent e){
         Player p = e.getPlayer();

@@ -12,21 +12,22 @@ import static org.bukkit.Bukkit.getServer;
 
 
 public class spawn implements CommandExecutor {
+    public Core plugin;
+
+    public spawn(Core plugin){
+        this.plugin = plugin;
+    }
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
             if (args.length == 0) {
-                World SessionWorld = Bukkit.getServer().getWorld("Lobby");
-                Location SessionWorldSpawn = new Location(SessionWorld, 100.5, 101, 100.5, 180f, 0f);
-                p.teleport(SessionWorldSpawn);
+                p.teleport(plugin.spawnloc);
                 p.sendMessage(Core.PLname + "You have been teleported to spawn.");
                 return true;
             }else if (args.length == 1) {
                 if (!(p.hasPermission("rank.admin"))){
-                    World SessionWorld = Bukkit.getServer().getWorld("Lobby");
-                    Location SessionWorldSpawn = new Location(SessionWorld, 100.5, 101, 100.5, 180f, 0f);
-                    p.teleport(SessionWorldSpawn);
+                    p.teleport(plugin.spawnloc);
                     p.sendMessage(Core.PLname + "You have been teleported to spawn.");
                 }else{
                     // HAVE RANK
@@ -35,18 +36,14 @@ public class spawn implements CommandExecutor {
                         p.sendMessage(Core.PLname+ChatColor.RED+"That player is offline.");
                         return true;
                     }
-                    World SessionWorld = Bukkit.getServer().getWorld("Lobby");
-                    Location SessionWorldSpawn = new Location(SessionWorld, 100.5, 101, 100.5, 180f, 0f);
-                    target.teleport(SessionWorldSpawn);
+                    target.teleport(plugin.spawnloc);
                     target.sendMessage(Core.PLname + "You have been teleported to spawn.");
                     p.sendMessage(Core.PLname+"Sent "+target.getName()+" to spawn.");
                     return true;
                 }
             }else{
                 if (!(p.hasPermission("rank.admin"))){
-                    World SessionWorld = Bukkit.getServer().getWorld("Lobby");
-                    Location SessionWorldSpawn = new Location(SessionWorld, 100.5, 101, 100.5, 180f, 0f);
-                    p.teleport(SessionWorldSpawn);
+                    p.teleport(plugin.spawnloc);
                     p.sendMessage(Core.PLname + "You have been teleported to spawn.");
                 }else{
                     sender.sendMessage("/spawn <player>" + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Spawn player you want.");

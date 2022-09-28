@@ -1,14 +1,17 @@
 package core.itdragclick.events;
 
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,6 +28,16 @@ public class Chat implements Listener {
             p.sendMessage(PLname+ ChatColor.RED+"You can't send message with that character!");
             e.setCancelled(true);
             return;
+        }
+        String[] split = msg.split(" ");
+        for (final Player ap : Bukkit.getOnlinePlayers()) {
+            if (ap != e.getPlayer()) {
+                if(Arrays.asList(split).contains(ap.getName())) {
+                    ap.playSound(ap.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10000, 2);
+                    msg = msg.replaceAll(ap.getName(), ChatColor.YELLOW + ap.getName() + ChatColor.RESET);
+                    ap.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.YELLOW+p.getName()+ChatColor.GREEN+" mention you!"));
+                }
+            }
         }
         msg = msg.replaceAll("%","%%");
             if(p.hasPermission("rank.emoji")){

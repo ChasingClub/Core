@@ -17,19 +17,6 @@ public class JoinMessage implements Listener {
     {
         Player player = event.getPlayer();
         event.setJoinMessage(ChatColor.GREEN + "[+] " + ChatColor.GRAY + player.getName());
-        if (!player.hasPlayedBefore()){
-            event.setJoinMessage(null);
-            ByteArrayOutputStream b = new ByteArrayOutputStream();
-            DataOutputStream out = new DataOutputStream(b);
-            try {
-                out.writeUTF("MessageRaw");
-                out.writeUTF("ALL");
-                out.writeUTF("{\"text\":\"[+] \",\"bold\":true,\"color\":\"green\"},{\"text\":\""+player.getName()+" \",\"bold\":true,\"color\":\"gray\"},{\"text\":\"joined for the first time!\",\"bold\":true,\"color\":\"aqua\"}");
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-            player.sendPluginMessage((Plugin) this, "BungeeCord", b.toByteArray());
-        }
     }
 
     @EventHandler
