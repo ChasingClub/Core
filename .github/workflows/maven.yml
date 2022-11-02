@@ -28,10 +28,10 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build BungeeCore
-      run: mvn -B package --file Core-BungeeCord/pom.xml
+      run: mvn -B -X package --file Core-BungeeCord/pom.xml
     - name: Build LobbyCore
-      run: mvn -B package --file Core-Lobby/pom.xml
+      run: mvn -B -X package --file Core-Lobby/pom.xml
     - name: Build PVPCore
-      run: mvn -B package --file Core-PVP/pom.xml
+      run: mvn -B -X package --file Core-PVP/pom.xml
     - name: Build SpaceballCore
-      run: mvn -B package --file Core-Spaceball/pom.xml
+      run: mvn -B -X package --file Core-Spaceball/pom.xml
