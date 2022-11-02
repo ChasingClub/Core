@@ -29,9 +29,9 @@ jobs:
         cache: maven
     - name: Build BungeeCore
       run: mvn -B -X package --file Core-BungeeCord/pom.xml
-    - name: Build LobbyCore
-      run: mvn -B -X package --file Core-Lobby/pom.xml
     - name: Build PVPCore
       run: mvn -B -X package --file Core-PVP/pom.xml
     - name: Build SpaceballCore
       run: mvn -B -X package --file Core-Spaceball/pom.xml
+    - name: Build LobbyCore
+      run: mvn -B -X package --file Core-Lobby/pom.xml
