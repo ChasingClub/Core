@@ -6,6 +6,10 @@
 version: 2
 updates:
   - package-ecosystem: "maven" # See documentation for possible values
-    directory: ["Core-BungeeCore/", "Core-Lobby/", "Core-PVP/", "Core-SpaceBall/] # Location of package manifests
+  # Location of package manifests
+    directory: "Core-BungeeCore/"
+    directory: "Core-Lobby/"
+    directory: "Core-PVP/"
+    directory: "Core-SpaceBall/" 
     schedule:
       interval: "monthly"
