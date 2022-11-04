@@ -4,11 +4,25 @@ main: core.itdragclick.Core
 api-version: 1.19
 author: 'ItDragClick'
 description: Custom PRAF Plugin Made by ItDragCLick
+depend:
+  - Vanish
 
 commands:
   test:
     description: test command
     usage: /test
+
+  setspawn:
+    description: setspawn command
+    usage: /setspawn
+
+  enderchest:
+    description: enderchest
+    usage: /enderchest
+    aliases:
+      - enderchest
+      - ec
+      - ender_chest
 
   core:
     description: core command

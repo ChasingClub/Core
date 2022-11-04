@@ -43,6 +43,7 @@ public class sudo implements CommandExecutor {
                 if (args[1].toLowerCase(Locale.ENGLISH).startsWith("c:")){
                     message = message.replaceFirst("c:","");
                     message = message.replaceFirst("/","");
+                    message = message.replaceFirst("C:","");
                     StringJoiner msg = new StringJoiner(" ");
                     for(int i = 2; i < args.length; i++)
                         msg.add(args[i]);
@@ -50,6 +51,7 @@ public class sudo implements CommandExecutor {
                     return true;
                 }else if (args[1].toLowerCase(Locale.ENGLISH).startsWith("cmd:")){
                     message = message.replaceFirst("cmd:","/");
+                    message = message.replaceFirst("CMD:","/");
                     target.chat(message);
                     return true;
                 }else{

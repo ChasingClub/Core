@@ -11,7 +11,7 @@ public class Bhopping implements Listener {
     public void onPlayerJump(PlayerJumpEvent e) {
         Player player = e.getPlayer();
         ///////////////////////////////////////////////////
-        if (player.getLocation().getWorld().getName().endsWith("Lobby")) {
+        if (player.getLocation().getWorld().getName().endsWith("Hub")) {
             if (player.isSneaking() && player.isSprinting() && !(player.isFlying()) && !(player.isDead()) && !(player.isInLava()) && !(player.isClimbing()) && !(player.isSwimming())) {
                 player.setSneaking(false);
                 player.setVelocity(player.getLocation().getDirection());

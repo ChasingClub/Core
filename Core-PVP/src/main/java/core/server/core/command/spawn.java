@@ -12,6 +12,11 @@ import org.bukkit.potion.PotionEffect;
 import static org.bukkit.Bukkit.getServer;
 
 public class spawn implements CommandExecutor {
+    public Core plugin;
+
+    public spawn(Core plugin){
+        this.plugin = plugin;
+    }
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player) {
@@ -30,9 +35,7 @@ public class spawn implements CommandExecutor {
                     }
                     Core.GetKitSelect(p);
                 }
-                World SessionWorld = getServer().getWorld("world");
-                Location SessionWorldSpawn = new Location(SessionWorld, 64.5, 180, 26.5);
-                p.teleport(SessionWorldSpawn);
+                p.teleport(plugin.spawnloc);
                 if (p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR) {
                     p.sendMessage(Core.Plname + "You have been teleported to spawn.");
                 } else if (p.getGameMode() == GameMode.CREATIVE) {
@@ -56,9 +59,7 @@ public class spawn implements CommandExecutor {
                         }
                         Core.GetKitSelect(p);
                     }
-                    World SessionWorld = getServer().getWorld("world");
-                    Location SessionWorldSpawn = new Location(SessionWorld, 64.5, 180, 26.5);
-                    p.teleport(SessionWorldSpawn);
+                    p.teleport(plugin.spawnloc);
                     if (p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR) {
                         p.sendMessage(Core.Plname + "You have been teleported to spawn.");
                     } else if (p.getGameMode() == GameMode.CREATIVE) {
@@ -87,9 +88,7 @@ public class spawn implements CommandExecutor {
                         }
                         Core.GetKitSelect(p);
                     }
-                    World SessionWorld = getServer().getWorld("world");
-                    Location SessionWorldSpawn = new Location(SessionWorld, 64.5, 180, 26.5);
-                    target.teleport(SessionWorldSpawn);
+                    target.teleport(plugin.spawnloc);
                     if (target.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR) {
                         target.sendMessage(Core.Plname + "You have been teleported to spawn.");
                     } else if (target.getGameMode() == GameMode.CREATIVE) {
@@ -115,9 +114,7 @@ public class spawn implements CommandExecutor {
                         }
                         Core.GetKitSelect(p);
                     }
-                    World SessionWorld = getServer().getWorld("world");
-                    Location SessionWorldSpawn = new Location(SessionWorld, 64.5, 180, 26.5);
-                    p.teleport(SessionWorldSpawn);
+                    p.teleport(plugin.spawnloc);
                     if (p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR) {
                         p.sendMessage(Core.Plname + "You have been teleported to spawn.");
                     } else if (p.getGameMode() == GameMode.CREATIVE) {

@@ -9,15 +9,18 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.potion.PotionEffect;
 
 public class Respawn implements Listener {
+    public Core plugin;
+
+    public Respawn(Core plugin){
+        this.plugin = plugin;
+    }
     @EventHandler
     public void onRespawn(PlayerRespawnEvent e) {
         Player p = e.getPlayer();
         if (p.getLocation().getWorld().getName().endsWith("world")) {
                 Core.combatList.put(p.getName(), 0);
-                World SessionWorld = Bukkit.getServer().getWorld("world");
-                Location SessionWorldSpawn = new Location(SessionWorld, 64.5, 180.5, 26.5);
-                e.setRespawnLocation(SessionWorldSpawn);
-                p.teleport(SessionWorldSpawn);
+                e.setRespawnLocation(plugin.spawnloc);
+                p.teleport(plugin.spawnloc);
             if (p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR) {
                 p.getInventory().clear();
                 Core.GetKitSelect(p);

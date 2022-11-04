@@ -1,2 +1,13 @@
-pack: 'https://download.mc-packs.net/pack/df008ab4a4ab161fc3c721bda62b72f357014ab5.zip'
-hash: 'df008ab4a4ab161fc3c721bda62b72f357014ab5'
+spawn:
+  world: 'Hub'
+  x: 0
+  y: 65
+  z: 0
+  yaw: 180
+  pitch: 0
+
+database:
+  IP: localhost
+  username: 'username'
+  password: 'password'
+  database: 'database'

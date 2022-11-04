@@ -52,13 +52,12 @@ public class givekit implements CommandExecutor {
                 sender.sendMessage("/givekit <player>" + ChatColor.GRAY + " - " + ChatColor.GOLD + "Give kit player you want.");
                 return true;
             }
-
         }
         return true;
     }
 
     // GIVE KITSSSS
-    public void givekite(Player p){
+    public static void givekite(Player p){
         Inventory inv = p.getInventory();
         ItemStack[] armor = new ItemStack[4];
         ItemStack arrow = new ItemStack(Material.ARROW, 48);
