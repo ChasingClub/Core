@@ -1,7 +1,10 @@
 cc\Cuboid.class
+cc\commands\core\Utils.class
 cc\commands\feed.class
+cc\commands\core\helps.class
 cc\Core.class
 cc\Machanic\BouncingArrow.class
+cc\commands\core\core.class
 cc\Machanic\hopDown.class
 cc\Machanic\lemonJuice.class
 cc\commands\heal.class

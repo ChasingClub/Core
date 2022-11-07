@@ -6,6 +6,8 @@ import cc.commands.feed;
 import cc.commands.heal;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -13,6 +15,12 @@ import java.io.File;
 public class Core extends JavaPlugin {
 
     public static String Plname = (ChatColor.YELLOW + "C" + ChatColor.LIGHT_PURPLE + "C" + ChatColor.DARK_GRAY + " » " + ChatColor.GRAY);
+
+    public void reload() {
+        File configfile = new File(getDataFolder(), "config.yml");
+        FileConfiguration config = YamlConfiguration.loadConfiguration(configfile);
+    }
+
 
     @Override
     public void onEnable() {
@@ -25,6 +33,7 @@ public class Core extends JavaPlugin {
             saveConfig(); //saves the config
             reloadConfig(); //reloads the config
         }
+        reload();
 
         // EventLoad
 

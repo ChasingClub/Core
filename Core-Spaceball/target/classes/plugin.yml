@@ -12,3 +12,7 @@ commands:
   heal:
     description: heal player
     usage: /heal
+
+  core:
+    description: core
+    usage: /core
