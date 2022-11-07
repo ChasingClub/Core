@@ -2,6 +2,8 @@ package cc;
 
 import cc.Machanic.BouncingArrow;
 import cc.Machanic.hopDown;
+import cc.commands.feed;
+import cc.commands.heal;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,11 +26,16 @@ public class Core extends JavaPlugin {
             reloadConfig(); //reloads the config
         }
 
-        // Load Plugin
+        // EventLoad
         getServer().getPluginManager().registerEvents(new hopDown(), this);
         getServer().getPluginManager().registerEvents(new BouncingArrow(), this);
 //        getServer().getPluginManager().registerEvents(new lemonJuice(), this);
 //        getServer().getPluginManager().registerEvents(this, this);
+
+        // Comamnd Load
+        getCommand("heal").setExecutor(new heal());
+        getCommand("feed").setExecutor(new feed());
+
         Bukkit.getLogger().info(Plname + "Plugin Loaded");
 
     }

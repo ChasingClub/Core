@@ -1,5 +1,14 @@
 name: SpaceBall
 version: '${project.version}'
-main: cc.spaceball
+main: cc.Core
 api-version: 1.19
 authors: [ Pinont ]
+
+commands:
+  feed:
+    description: feed player
+    usage: /feed
+
+  heal:
+    description: heal player
+    usage: /heal

@@ -1,5 +1,7 @@
 cc\Cuboid.class
-cc\spaceball.class
+cc\commands\feed.class
+cc\Core.class
 cc\Machanic\BouncingArrow.class
 cc\Machanic\hopDown.class
 cc\Machanic\lemonJuice.class
+cc\commands\heal.class

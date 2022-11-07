@@ -1,5 +1,14 @@
 name: SpaceBall
 version: '1.0-SNAPSHOT'
-main: cc.spaceball
+main: cc.Core
 api-version: 1.19
 authors: [ Pinont ]
+
+commands:
+  feed:
+    description: feed player
+    usage: /feed
+
+  heal:
+    description: heal player
+    usage: /heal
