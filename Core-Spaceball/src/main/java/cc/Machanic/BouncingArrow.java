@@ -1,287 +1,60 @@
 package cc.Machanic;
 
-import org.bukkit.Bukkit;
+import cc.Core;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
+import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.util.BlockIterator;
+import org.bukkit.util.Vector;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.projectiles.ProjectileSource;
-import org.bukkit.util.Vector;
 
-import java.lang.reflect.Field;
-import java.rmi.server.ExportException;
-import java.util.Objects;
+import java.util.List;
 
 public class BouncingArrow implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onProjectileEvent(ProjectileHitEvent e) {
+    public static final double MIN_MAGNITUDE_THRESHOLD = 0.6;
+    public static final int MAX_BOUNCE_COUNT = 4;
 
-        Projectile projectile = e.getEntity();
-        ProjectileSource projectileSource = projectile.getShooter();
-        EntityType projectileType = projectile.getType();
+    private Core plugin;
 
-        // Check if the projectile type is Arrow
-        if (projectileType == EntityType.ARROW) {
+    public BouncingArrow(Core plugin) {
+        this.plugin = plugin;
+    }
 
-            // implement variable
-            Vector arrowVelocity = projectile.getVelocity();
-            double speed = arrowVelocity.length();
-            Location arrowLocation = projectile.getLocation();
-            BlockFace blockFace = e.getHitBlockFace();
+    @EventHandler
+    public void onEntityShootBowEvent(EntityShootBowEvent event) {
 
-            Bukkit.getLogger().info(e.getHitBlockFace() + " and " + projectileSource);
+        LivingEntity entity = event.getEntity();
+        Entity projectile = event.getProjectile();
 
+        if (entity instanceof Player && projectile.getType() == EntityType.ARROW) {
 
+            ItemStack theBow = event.getBow();
 
-            // if arrow not detect air
-            if(blockFace != null && speed >= 0.3D) {
+            if (theBow.hasItemMeta() && theBow.getItemMeta().hasEnchant(Enchantment.SILK_TOUCH)) {
 
-                Bukkit.getLogger().info("BlockFace != null");
+                Player player = (Player) entity;
 
-                if (blockFace == BlockFace.UP) {
-
-                    Vector mirrorDirection = new Vector(blockFace.getModX(), blockFace.getModY(), blockFace.getModZ());
-                    double dotProduct = arrowVelocity.dot(mirrorDirection);
-                    mirrorDirection = mirrorDirection.multiply(dotProduct).multiply(0.2D);
-
-                    // reduce projectile speed
-                    speed *= 0.5D;
-
-                    Projectile newProjectile;
-
-                    newProjectile = projectile.getWorld().spawnArrow(arrowLocation, arrowVelocity.subtract(mirrorDirection), (float) speed, 4.0F);
-
-                    // make arrow pickup-able
-                    if (projectileSource instanceof Player) {
-
-                        Field field;
-
-                        try {
-
-                            // create arrow
-                            Object entityArrow = newProjectile.getClass().getMethod("getHandle").invoke(newProjectile);
-                            field = entityArrow.getClass().getDeclaredField("fromPlayer");
-                            // field.setAccessible(true);
-                            field.set(entityArrow, 1); // create 1 arrow
-
-                        } catch (Exception err) {
-
-                            System.out.println("[CscbAr] Failed to set the arrow pick-able! StackTrace: ");
-                            err.printStackTrace();
-
-                        }
-
-                    } else {
-
-                        newProjectile = (Projectile) projectile.getWorld().spawnEntity(arrowLocation, projectile.getType());
-                        newProjectile.setVelocity(arrowVelocity.subtract(mirrorDirection).normalize().multiply(speed));
-
-                    }
-
-                    newProjectile.setShooter(projectileSource); // set arrow owner's to player shooter
-                    newProjectile.setFireTicks(projectile.getFireTicks()); // if bow has flame enchant
-
-                    // remove old arrow
-                    projectile.remove();
-                    Bukkit.getLogger().info("condition 1: UP");
-
-                } else if (blockFace == BlockFace.DOWN) {
-
-                    Vector mirrorDirection = new Vector(blockFace.getModX(), blockFace.getModY(), blockFace.getModZ());
-                    double dotProduct = arrowVelocity.dot(mirrorDirection);
-                    mirrorDirection = mirrorDirection.multiply(dotProduct).multiply(2.0D);
-
-                    // reduce projectile speed
-                    speed *= 0.6D;
-
-                    Projectile newProjectile;
-
-                    newProjectile = projectile.getWorld().spawnArrow(arrowLocation, arrowVelocity.subtract(mirrorDirection), (float) speed, 4.0F);
-
-                    // make arrow pickup-able
-                    if (projectileSource instanceof Player) {
-
-                        Field field;
-
-                        try {
-
-                            // create arrow
-                            Object entityArrow = newProjectile.getClass().getMethod("getHandle").invoke(newProjectile);
-                            field = entityArrow.getClass().getDeclaredField("fromPlayer");
-                            // field.setAccessible(true);
-                            field.set(entityArrow, 1); // create 1 arrow
-
-                        } catch (Exception err) {
-
-                            System.out.println("[CscbAr] Failed to set the arrow pick-able! StackTrace: ");
-                            err.printStackTrace();
-
-                        }
-
-                    } else {
-
-                        newProjectile = (Projectile) projectile.getWorld().spawnEntity(arrowLocation, projectile.getType());
-                        newProjectile.setVelocity(arrowVelocity.subtract(mirrorDirection).normalize().multiply(speed));
-
-                    }
-
-                    newProjectile.setShooter(projectileSource); // set arrow owner's to player shooter
-                    newProjectile.setFireTicks(projectile.getFireTicks()); // if bow has flame enchant
-
-                    // remove old arrow
-                    projectile.remove();
-                    Bukkit.getLogger().info("condition 2: DOWN");
-
-                } else if (blockFace == BlockFace.NORTH) {
-
-                    Vector mirrorDirection = new Vector(blockFace.getModX(), blockFace.getModY(), blockFace.getModZ());
-                    double dotProduct = arrowVelocity.dot(mirrorDirection);
-                    mirrorDirection = mirrorDirection.multiply(dotProduct).multiply(2.0D);
-
-                    // reduce projectile speed
-                    speed *= 0.6D;
-
-                    Projectile newProjectile;
-
-                    newProjectile = projectile.getWorld().spawnArrow(arrowLocation, arrowVelocity.subtract(mirrorDirection), (float) speed, 4.0F);
-
-                    // make arrow pickup-able
-                    if (projectileSource instanceof Player) {
-
-                        Field field;
-
-                        try {
-
-                            // create arrow
-                            Object entityArrow = newProjectile.getClass().getMethod("getHandle").invoke(newProjectile);
-                            field = entityArrow.getClass().getDeclaredField("fromPlayer");
-                            // field.setAccessible(true);
-                            field.set(entityArrow, 1); // create 1 arrow
-
-                        } catch (Exception err) {
-
-                            System.out.println("[CscbAr] Failed to set the arrow pick-able! StackTrace: ");
-                            err.printStackTrace();
-
-                        }
-
-                    } else {
-
-                        newProjectile = (Projectile) projectile.getWorld().spawnEntity(arrowLocation, projectile.getType());
-                        newProjectile.setVelocity(arrowVelocity.subtract(mirrorDirection).normalize().multiply(speed));
-
-                    }
-
-                    newProjectile.setShooter(projectileSource); // set arrow owner's to player shooter
-                    newProjectile.setFireTicks(projectile.getFireTicks()); // if bow has flame enchant
-
-                    // remove old arrow
-                    projectile.remove();
-                    Bukkit.getLogger().info("condition 4: NORTH");
-
-                } else if (blockFace == BlockFace.EAST) {
-
-                    Vector mirrorDirection = new Vector(blockFace.getModX(), blockFace.getModY(), blockFace.getModZ());
-                    double dotProduct = arrowVelocity.dot(mirrorDirection);
-                    mirrorDirection = mirrorDirection.multiply(dotProduct).multiply(2.0D);
-
-                    // reduce projectile speed
-                    speed *= 0.6D;
-
-                    Projectile newProjectile;
-
-                    newProjectile = projectile.getWorld().spawnArrow(arrowLocation, arrowVelocity.subtract(mirrorDirection), (float) speed, 4.0F);
-
-                    // make arrow pickup-able
-                    if (projectileSource instanceof Player) {
-
-                        Field field;
-
-                        try {
-
-                            // create arrow
-                            Object entityArrow = newProjectile.getClass().getMethod("getHandle").invoke(newProjectile);
-                            field = entityArrow.getClass().getDeclaredField("fromPlayer");
-                            // field.setAccessible(true);
-                            field.set(entityArrow, 1); // create 1 arrow
-
-                        } catch (Exception err) {
-
-                            System.out.println("[CscbAr] Failed to set the arrow pick-able! StackTrace: ");
-                            err.printStackTrace();
-
-                        }
-
-                    } else {
-
-                        newProjectile = (Projectile) projectile.getWorld().spawnEntity(arrowLocation, projectile.getType());
-                        newProjectile.setVelocity(arrowVelocity.subtract(mirrorDirection).normalize().multiply(speed));
-
-                    }
-
-                    newProjectile.setShooter(projectileSource); // set arrow owner's to player shooter
-                    newProjectile.setFireTicks(projectile.getFireTicks()); // if bow has flame enchant
-
-                    // remove old arrow
-                    projectile.remove();
-                    Bukkit.getLogger().info("condition 5: EAST");
-
-                } else if (blockFace == BlockFace.WEST) {
-
-                    Vector mirrorDirection = new Vector(blockFace.getModX(), blockFace.getModY(), blockFace.getModZ());
-                    double dotProduct = arrowVelocity.dot(mirrorDirection);
-                    mirrorDirection = mirrorDirection.multiply(dotProduct).multiply(2.0D);
-
-                    // reduce projectile speed
-                    speed *= 0.6D;
-
-                    Projectile newProjectile;
-
-                    newProjectile = projectile.getWorld().spawnArrow(arrowLocation, arrowVelocity.subtract(mirrorDirection), (float) speed, 4.0F);
-
-                    // make arrow pickup-able
-                    if (projectileSource instanceof Player) {
-
-                        Field field;
-
-                        try {
-
-                            // create arrow
-                            Object entityArrow = newProjectile.getClass().getMethod("getHandle").invoke(newProjectile);
-                            field = entityArrow.getClass().getDeclaredField("fromPlayer");
-                            // field.setAccessible(true);
-                            field.set(entityArrow, 1); // create 1 arrow
-
-                        } catch (Exception err) {
-
-                            System.out.println("[CscbAr] Failed to set the arrow pick-able! StackTrace: ");
-                            err.printStackTrace();
-
-                        }
-
-                    } else {
-
-                        newProjectile = (Projectile) projectile.getWorld().spawnEntity(arrowLocation, projectile.getType());
-                        newProjectile.setVelocity(arrowVelocity.subtract(mirrorDirection).normalize().multiply(speed));
-
-                    }
-
-                    newProjectile.setShooter(projectileSource); // set arrow owner's to player shooter
-                    newProjectile.setFireTicks(projectile.getFireTicks()); // if bow has flame enchant
-
-                    // remove old arrow
-                    projectile.remove();
-                    Bukkit.getLogger().info("condition 6: WEST");
-
+                if (player.hasPermission("bouncingarrows.use")) {
+                    final int enchantmentLevel = theBow.getItemMeta().getEnchantLevel(Enchantment.SILK_TOUCH);
+                    final int bouncingCount = Math.max(1, Math.min(enchantmentLevel, MAX_BOUNCE_COUNT));
+                    projectile.setMetadata("bouncing", new FixedMetadataValue(plugin, bouncingCount));
                 }
             }
 
@@ -289,73 +62,79 @@ public class BouncingArrow implements Listener {
 
     }
 
+    @EventHandler(priority=EventPriority.HIGH, ignoreCancelled=true)
+    public void onProjectileHitEvent(ProjectileHitEvent event) {
 
-    // ## This is Main Code
-    /**
-//     *     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-     *     public void onProjectileEvent(ProjectileHitEvent e) {
-     *         Projectile projectile = e.getEntity();
-     *         ProjectileSource source = projectile.getShooter();
-     *         EntityType projectileType = projectile.getType();
-     *
-     *         if (projectile.hasMetadata("bouncing")) {
-     *             Vector arrowVelocity = projectile.getVelocity();
-     *             double speed = arrowVelocity.length();
-     *
-     *             if (speed < 0.3D || (projectileType == EntityType.ARROW && speed < 0.5D)) {
-     *                 return;
-     *             }
-     *
-     *             Location arrowLocation = projectile.getLocation();
-     *             Block hitBlock = arrowLocation.getBlock();
-     *
-     *             BlockFace blockFace = BlockFace.UP;
-     *
-     *             if (blockFace != null) {
-     *                 if (blockFace == BlockFace.SELF) {
-     *                     blockFace = BlockFace.UP;
-     *                 }
-     *
-     *                 Vector mirrorDirection = new Vector(blockFace.getModX(), blockFace.getModY(), blockFace.getModZ());
-     *                 double dotProduct = arrowVelocity.dot(mirrorDirection);
-     *                 mirrorDirection = mirrorDirection.multiply(dotProduct).multiply(2.0D);
-     *
-     *                 // reduce projectile speed
-     *                 speed *= 0.6D;
-     *
-     *                 Projectile newProjectile;
-     *                 if (projectileType == EntityType.ARROW) {
-     *                     // spawn with slight spray:
-     *                     newProjectile = projectile.getWorld().spawnArrow(arrowLocation, arrowVelocity.subtract(mirrorDirection), (float) speed, 4.0F);
-     *
-     *                     // make the arrow pickup-able:
-     *                     if (source instanceof Player) {
-     *                         Field field;
-     *                         try {
-     *                             Object entityArrow = newProjectile.getClass().getMethod("getHandle").invoke(newProjectile);
-     *                             field = entityArrow.getClass().getDeclaredField("fromPlayer");
-     *                             // field.setAccessible(true);
-     *                             field.set(entityArrow, 1);
-     *                         } catch (Exception err) {
-     *                             System.out.println("[BouncingArrows] Failed to set the arrow pick-able! StackTrace: ");
-     *                             err.printStackTrace();
-     *                         }
-     *                     }
-     *                 } else {
-     *                     // without spray:
-     *                     newProjectile = (Projectile) projectile.getWorld().spawnEntity(arrowLocation, projectile.getType());
-     *                     newProjectile.setVelocity(arrowVelocity.subtract(mirrorDirection).normalize().multiply(speed));
-     *                 }
-     *
-     *                 newProjectile.setShooter(source);
-     *                 newProjectile.setFireTicks(projectile.getFireTicks());
-     *
-     *                 // remove old arrow
-     *                 projectile.remove();
-     *
-     *     }**/
+        Projectile entity = event.getEntity();
 
+        ProjectileSource shooter = event.getEntity().getShooter();
 
+        if (shooter instanceof Player
+                && entity.getType() == EntityType.ARROW
+                && entity.hasMetadata("bouncing")) {
 
+            Vector arrowVector = entity.getVelocity();
+
+            final double magnitude = Math.sqrt(
+                    Math.pow(arrowVector.getX(), 2) +
+                            Math.pow(arrowVector.getY(), 2) +
+                            Math.pow(arrowVector.getZ(), 2));
+
+            if (magnitude < MIN_MAGNITUDE_THRESHOLD) {
+                return;
+            }
+
+            Location hitLoc = entity.getLocation();
+
+            BlockIterator b = new BlockIterator(hitLoc.getWorld(),
+                    hitLoc.toVector(), arrowVector, 0, 3);
+
+            Block hitBlock = event.getEntity().getLocation().getBlock();
+
+            Block blockBefore = hitBlock;
+            Block nextBlock = b.next();
+
+            while (b.hasNext() && nextBlock.getType() == Material.AIR)
+            {
+                blockBefore = nextBlock;
+                nextBlock = b.next();
+            }
+
+            BlockFace blockFace = nextBlock.getFace(blockBefore);
+
+            if (blockFace != null) {
+
+                // Convert blockFace SELF to UP:
+                if (blockFace == BlockFace.SELF) {
+                    blockFace = BlockFace.UP;
+                }
+
+                Vector hitPlain = new Vector(blockFace.getModX(), blockFace.getModY(), blockFace.getModZ());
+
+                double dotProduct = arrowVector.dot(hitPlain);
+                Vector u = hitPlain.multiply(dotProduct).multiply(2.0);
+
+                float speed = (float) magnitude;
+                speed *= 0.6F;
+
+                Arrow newArrow = entity.getWorld().spawnArrow(entity.getLocation(), arrowVector.subtract(u), speed, 12.0F);
+
+                List<MetadataValue> metaDataValues = entity.getMetadata("bouncing");
+                if (metaDataValues.size() > 0) {
+                    int prevBouncingRate = metaDataValues.get(0).asInt();
+                    if (prevBouncingRate > 1) {
+                        newArrow.setMetadata("bouncing", new FixedMetadataValue(plugin, prevBouncingRate - 1));
+                    }
+                }
+
+                newArrow.setShooter(shooter);
+                newArrow.setFireTicks(entity.getFireTicks());
+
+                entity.remove();
+
+            }
+
+        }
+    }
 
 }

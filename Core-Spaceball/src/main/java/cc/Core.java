@@ -27,8 +27,9 @@ public class Core extends JavaPlugin {
         }
 
         // EventLoad
+
         getServer().getPluginManager().registerEvents(new hopDown(), this);
-        getServer().getPluginManager().registerEvents(new BouncingArrow(), this);
+        getServer().getPluginManager().registerEvents(new BouncingArrow(this), this);
 //        getServer().getPluginManager().registerEvents(new lemonJuice(), this);
 //        getServer().getPluginManager().registerEvents(this, this);
 
