@@ -27,5 +27,5 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    - name: Build Core
-      run: mvn -B -X package --file target/*.xml
+    - name: Test Build
+      run: mvn -B -X package --file Core-BungeeCord/*.xml
