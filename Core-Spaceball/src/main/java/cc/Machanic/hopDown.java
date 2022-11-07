@@ -15,6 +15,7 @@ public class hopDown implements Listener {
 
         if(!(player.isOnGround()) && player.isSneaking() && !(player.isSwimming()) && !(player.isFlying()) && !(player.isFrozen()) && !(player.isVisualFire())) {
             player.setVelocity(player.getLocation().getDirection().setY(1));
+            player.setFoodLevel(player.getFoodLevel() - 3);
             player.setSneaking(false);
         }
     }
