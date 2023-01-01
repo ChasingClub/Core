@@ -10,9 +10,11 @@ import org.bukkit.potion.PotionEffect;
 
 import java.sql.SQLException;
 
+import static chasingclub.server.core.Utils.Database.UpdateDuel;
 import static chasingclub.server.core.Utils.Database.UpdateKit;
 import static chasingclub.server.core.Utils.Utils.PluginName;
 import static chasingclub.server.core.Utils.Utils.error;
+import static chasingclub.server.core.events.classic_sword.Lives;
 import static org.bukkit.Bukkit.getServer;
 import static chasingclub.server.core.Core.*;
 
@@ -54,18 +56,33 @@ public class LeaveEvent implements Listener {
             p.teleport(plugin.spawnloc);
             p.getInventory().clear();
             Player target = getServer().getPlayer(ingame.get(p.getName()));
+            if (target == null) {
+                return;
+            }
+            try {
+                UpdateDuel(p, "loses");
+                UpdateDuel(target, "wins");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                target.sendMessage(error+" Please report staff");
+                p.sendMessage(error+" Please report staff");
+            }
             target.getInventory().clear();
             combatList.put(target.getName(), 0);
             target.teleport(plugin.spawnloc);
             target.sendMessage(PluginName + "GG! you have defeated " + p.getName());
             GetKitSelect(target);
-            if (playerinmap.get(p.getName()).equals("Colosseum")){
+            if (playerinmap.get(p.getName()).equals("Colosseum2")){
+                maps.put("Colosseum2", true);
+            }else if (playerinmap.get(p.getName()).equals("Colosseum")){
                 maps.put("Colosseum", true);
-            }if (playerinmap.get(p.getName()).equals("Beach")){
+            }else if (playerinmap.get(p.getName()).equals("Beach")){
                 maps.put("Beach", true);
-            }if (playerinmap.get(p.getName()).equals("Abyss")){
+            }else if (playerinmap.get(p.getName()).equals("Abyss")){
                 maps.put("Abyss", true);
             }
+            Lives.remove(p.getName());
+            Lives.remove(target.getName());
             playerinmap.remove(p.getName());
             playerinmap.remove(target.getName());
             ingame.remove(target.getName());

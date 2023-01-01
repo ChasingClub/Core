@@ -12,7 +12,7 @@ import static core.itdragclick.Core.PLname;
 
 public class discord extends Command{
     public discord(){
-        super("discord","","dsc","dis","dc");
+        super("dsc","","dis","dc");
     }
     @Override
     public void execute(CommandSender sender, String[] args){

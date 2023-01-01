@@ -32,10 +32,13 @@ public class map implements CommandExecutor {
 
                     // MAP LIST CHECK
                     String Colosseum = null;
+                    String Colosseum2 = null;
                     String Beach = null;
                     String Abyss = null;
                     if (Boolean.TRUE.equals(Core.maps.get("Colosseum"))){Colosseum = ChatColor.GREEN+"ENABLED";}
                     if (Boolean.FALSE.equals(Core.maps.get("Colosseum"))){Colosseum = ChatColor.RED+"DISABLED";}
+                    if (Boolean.TRUE.equals(Core.maps.get("Colosseum2"))){Colosseum2 = ChatColor.GREEN+"ENABLED";}
+                    if (Boolean.FALSE.equals(Core.maps.get("Colosseum2"))){Colosseum2 = ChatColor.RED+"DISABLED";}
                     if (Boolean.TRUE.equals(Core.maps.get("Beach"))){Beach = ChatColor.GREEN+"ENABLED";}
                     if (Boolean.FALSE.equals(Core.maps.get("Beach"))){Beach = ChatColor.RED+"DISABLED";}
                     if (Boolean.TRUE.equals(Core.maps.get("Abyss"))){Abyss = ChatColor.GREEN+"ENABLED";}
@@ -45,6 +48,7 @@ public class map implements CommandExecutor {
                     sender.sendMessage(ChatColor.YELLOW+"Colosseum"+ChatColor.GRAY+" - "+Colosseum);
                     sender.sendMessage(ChatColor.YELLOW+"Beach"+ChatColor.GRAY+" - "+Beach);
                     sender.sendMessage(ChatColor.YELLOW+"Abyss"+ChatColor.GRAY+" - "+Abyss);
+                    sender.sendMessage(ChatColor.YELLOW+"Colosseum2"+ChatColor.GRAY+" - "+Colosseum2);
 
                     sender.sendMessage(ChatColor.GRAY+"=----------------------------=");
                     return true;

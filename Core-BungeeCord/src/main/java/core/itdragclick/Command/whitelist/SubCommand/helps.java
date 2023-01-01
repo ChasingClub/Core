@@ -13,6 +13,7 @@ public class helps {
             sender.sendMessage(ChatColor.BLUE + "/whitelist add <name>" + ChatColor.GRAY + " - " + ChatColor.GOLD + "Add a player whitelist");
             sender.sendMessage(ChatColor.BLUE + "/whitelist remove <name>" + ChatColor.GRAY + " - " + ChatColor.GOLD + "Remove a player whitelist");
             sender.sendMessage(ChatColor.BLUE + "/whitelist help" + ChatColor.GRAY + " - " + ChatColor.GOLD + "Show this message");
+            sender.sendMessage(ChatColor.BLUE + "/whitelist list" + ChatColor.GRAY + " - " + ChatColor.GOLD + "Show player whitelist");
             sender.sendMessage(ChatColor.GRAY + "=---------------[ " + ChatColor.GREEN + ChatColor.BOLD + "ON" + ChatColor.GRAY + " ]---------------=");
         }else{
             sender.sendMessage(ChatColor.GRAY + "=------------[ " + ChatColor.AQUA + ChatColor.BOLD + "Whitelist" + ChatColor.RESET + ChatColor.GRAY + " ]------------=");
@@ -20,7 +21,7 @@ public class helps {
             sender.sendMessage(ChatColor.BLUE + "/whitelist off" + ChatColor.GRAY + " - " + ChatColor.GOLD + "Turn whitelist off");
             sender.sendMessage(ChatColor.BLUE + "/whitelist add <name>" + ChatColor.GRAY + " - " + ChatColor.GOLD + "Add a player whitelist");
             sender.sendMessage(ChatColor.BLUE + "/whitelist remove <name>" + ChatColor.GRAY + " - " + ChatColor.GOLD + "Remove a player whitelist");
-            sender.sendMessage(ChatColor.BLUE + "/whitelist help" + ChatColor.GRAY + " - " + ChatColor.GOLD + "Show this message");
+            sender.sendMessage(ChatColor.BLUE + "/whitelist list" + ChatColor.GRAY + " - " + ChatColor.GOLD + "Show player whitelist");
             sender.sendMessage(ChatColor.GRAY + "=--------------[ " + ChatColor.RED + ChatColor.BOLD + "OFF" + ChatColor.GRAY + " ]---------------=");
         }
     }

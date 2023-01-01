@@ -3,7 +3,6 @@ package core.itdragclick.Command.whitelist;
 import core.itdragclick.Core;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static core.itdragclick.Command.guild.SubCommand.ShowHelp.showhelp;
 import static core.itdragclick.Command.whitelist.SubCommand.add.addplayerwl;
 import static core.itdragclick.Command.whitelist.SubCommand.helps.showhelp2;
 import static core.itdragclick.Command.whitelist.SubCommand.remove.removeplayerwl;

@@ -10,9 +10,9 @@ import vanish.itdragclick.api.vanish.VanishAPI;
 
 import java.sql.SQLException;
 
-import static core.itdragclick.Core.getserverselect;
 import static core.itdragclick.Core.msgconsole;
 import static core.itdragclick.Utils.Database.*;
+import static core.itdragclick.Utils.Utils.*;
 
 
 public class onjoin implements Listener {
@@ -26,10 +26,16 @@ public class onjoin implements Listener {
         Player p = e.getPlayer();
         if (p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR){
             p.setGameMode(GameMode.ADVENTURE);
+            if(p.hasPermission("rank.vip")) {
+                p.setAllowFlight(true);
+            }
             p.teleport(plugin.spawnloc);
             p.getInventory().clear();
         }
         getserverselect(p);
+        getprofileitem(p);
+        getcosmeticitem(p);
+        getsettingsitem(p);
         if(connection != null){
             try {
                 if(VanishAPI.isInvisible(p)){

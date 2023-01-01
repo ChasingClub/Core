@@ -2,12 +2,10 @@ package core.itdragclick.event;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import core.itdragclick.Database;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import org.checkerframework.checker.units.qual.C;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +13,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.SQLException;
 
-import static core.itdragclick.Database.playerdataonleave;
+import static core.itdragclick.Utils.Database.playerdataonleave;
 
 public class onLeave implements Listener {
     @EventHandler
@@ -26,11 +24,13 @@ public class onLeave implements Listener {
         try {
             Country = getCountry(IP);
         } catch (IOException ex) {
+            ex.printStackTrace();
             throw new RuntimeException(ex);
         }
         try {
             playerdataonleave(p, Country);
         } catch (SQLException ex) {
+            ex.printStackTrace();
             throw new RuntimeException(ex);
         }
     }

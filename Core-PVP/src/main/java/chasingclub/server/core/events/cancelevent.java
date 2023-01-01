@@ -4,6 +4,7 @@ import chasingclub.server.core.Core;
 import chasingclub.server.core.Utils.Utils;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -18,8 +19,13 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.PlayerInventory;
 import vanish.itdragclick.api.vanish.VanishAPI;
 
+import static chasingclub.server.core.Utils.HotbarGui.*;
+import static chasingclub.server.core.Utils.HotbarGui.A;
 import static chasingclub.server.core.Utils.Utils.PluginName;
 
 public class cancelevent implements Listener {
@@ -28,6 +34,15 @@ public class cancelevent implements Listener {
         Player p = e.getPlayer();
         if (!(Core.build.contains(p.getName())))
             {e.setCancelled(true);
+        }
+    }
+    @EventHandler
+    public void onSplash(PotionSplashEvent e){
+        Entity entity = e.getEntity();
+        if(Core.spawn.contains(entity.getLocation())){
+            e.setCancelled(true);
+        }else{
+            if (entity.getName().equals("kongekzaza")) e.setCancelled(true);
         }
     }
     @EventHandler
@@ -57,7 +72,12 @@ public class cancelevent implements Listener {
     @EventHandler
     public void onSlot(InventoryClickEvent e){
         Player p = (Player) e.getWhoClicked();
+        InventoryView view = e.getView();
+
         if(Core.spawn.contains(p.getLocation()) && p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR){
+            if(view.getTitle().equals(NS) || view.getTitle().equals(CS) || view.getTitle().equals(D) || view.getTitle().equals(T) || view.getTitle().equals(V) || view.getTitle().equals(A)){
+                return;
+            }
             e.setCancelled(true);
         }
     }
@@ -122,9 +142,11 @@ public class cancelevent implements Listener {
     public void onChangeBlock(EntityChangeBlockEvent e){
         if(e.getEntity() instanceof Player){
             Player p = (Player) e.getEntity();
-            if (!(Core.build.contains(p.getName()))) {
+            if (!(Core.build.contains(p.getName())) && e.getBlock().getType() != Material.BIG_DRIPLEAF) {
                 e.setCancelled(true);
             }
+        }else{
+            e.setCancelled(true);
         }
     }
     @EventHandler

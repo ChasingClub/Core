@@ -1,5 +1,6 @@
 package core.itdragclick.events;
 
+import core.itdragclick.Core;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -10,28 +11,44 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import vanish.itdragclick.api.vanish.VanishAPI;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static core.itdragclick.Core.*;
+import static core.itdragclick.Utils.Utils.PluginName;
 
 public class Chat implements Listener {
+    private final Pattern pattern = Pattern.compile("#[a-fA-F\\d]{6}");
+    private String format(String msg){
+        Matcher matcher = pattern.matcher(msg);
+        while (matcher.find()){
+            String color = msg.substring(matcher.start(), matcher.end());
+            msg = msg.replace(color, net.md_5.bungee.api.ChatColor.of(color) + "");
+            matcher = pattern.matcher(msg);
+        }
+        return ChatColor.translateAlternateColorCodes('&', msg);
+    }
     @EventHandler
     public void onSendMessage(AsyncPlayerChatEvent e){
         String msg = e.getMessage();
         Player p = e.getPlayer();
-        Pattern pattern = Pattern.compile("[a-zA-Z0-9ก-ฮ่้๊๋ไโใๆฯ๑-๙ูุึืิ์ัะาีำ.เแํฺ!@#$?:;'\"\\\\^& */\\[\\]()<>_+=,{}%-]*");
+        Pattern pattern = Pattern.compile("[a-zA-Z\\dก-ฮ่้๊๋ไโใๆฯ๑-๙ูุึืิ์ัะาีำ.เแํฺ!@#$?:;'\"\\\\^& */\\[\\]()<>_+=,{}%-]*");
         Matcher match = pattern.matcher(msg);
         if(!match.matches() && !p.hasPermission("rank.owner")){
-            p.sendMessage(PLname+ ChatColor.RED+"You can't send message with that character!");
+            p.sendMessage(PluginName+ ChatColor.RED+"You can't send message with that character!");
             e.setCancelled(true);
+            return;
+        }
+        if (Core.chatcooldowns.containsKey(p.getName())){
+            e.setCancelled(true);
+            p.sendMessage(PluginName+ChatColor.RED+"Please wait "+ Core.chatcooldowns.get(p.getName())+" second before send message.");
             return;
         }
         String[] split = msg.split(" ");
         for (final Player ap : Bukkit.getOnlinePlayers()) {
-            if (ap != e.getPlayer()) {
+            if (ap != e.getPlayer() && !VanishAPI.isInvisible(ap)) {
                 if(Arrays.asList(split).contains(ap.getName())) {
                     ap.playSound(ap.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10000, 2);
                     msg = msg.replaceAll(ap.getName(), ChatColor.YELLOW + ap.getName() + ChatColor.RESET);
@@ -40,22 +57,17 @@ public class Chat implements Listener {
             }
         }
         msg = msg.replaceAll("%","%%");
-            if(p.hasPermission("rank.emoji")){
-                msg = msg.replaceAll("<3",ChatColor.RED+"❤"+ChatColor.RESET);
-            }
-            if(p.hasPermission("rank.emoji")){
-                msg = msg.replaceAll("\\\\o/",ChatColor.LIGHT_PURPLE+"\\\\(ﾟ◡ﾟ)/"+ChatColor.RESET);
-            }
-            if(p.hasPermission("rank.emoji")){
-                msg = msg.replaceAll("o/",ChatColor.LIGHT_PURPLE+"( ﾟ◡ﾟ)/"+ChatColor.RESET);
-            }
-            if(p.hasPermission("rank.emoji")){
-                msg = msg.replaceAll("\\\\o",ChatColor.LIGHT_PURPLE+"\\\\(ﾟ◡ﾟ )"+ChatColor.RESET);
-            }
-        if (chatcooldowns.containsKey(p.getName())){
-            e.setCancelled(true);
-            p.sendMessage(PLname+ChatColor.RED+"Please wait "+chatcooldowns.get(p.getName())+" second before send message.");
-            return;
+        if(p.hasPermission("rank.emoji")){
+            msg = msg.replaceAll("<3",ChatColor.RED+"❤"+ChatColor.RESET);
+        }
+        if(p.hasPermission("rank.emoji")){
+            msg = msg.replaceAll("\\\\o/",ChatColor.LIGHT_PURPLE+"\\\\(ﾟ◡ﾟ)/"+ChatColor.RESET);
+        }
+        if(p.hasPermission("rank.emoji")){
+            msg = msg.replaceAll("o/",ChatColor.LIGHT_PURPLE+"( ﾟ◡ﾟ)/"+ChatColor.RESET);
+        }
+        if(p.hasPermission("rank.emoji")){
+            msg = msg.replaceAll("\\\\o",ChatColor.LIGHT_PURPLE+"\\\\(ﾟ◡ﾟ )"+ChatColor.RESET);
         }
         e.setMessage(msg);
         if(p.hasPermission("pf.default")){
@@ -73,32 +85,32 @@ public class Chat implements Listener {
         }if(p.hasPermission("pf.contributor")){
             e.setFormat(ChatColor.RESET+"\uE007 "+ChatColor.GOLD+ChatColor.BOLD+p.getName()+ChatColor.DARK_GRAY+" » "+ChatColor.RESET+msg);
         }if(p.hasPermission("pf.staff")){
-            e.setFormat(ChatColor.RESET+"\uE004 "+ChatColor.GREEN+ChatColor.BOLD+p.getName()+ChatColor.DARK_GRAY+" » "+ChatColor.RESET+msg);
+            e.setFormat(ChatColor.RESET+"\uE004 "+ChatColor.GREEN+ChatColor.BOLD+p.getName()+ChatColor.DARK_GRAY+" » "+ChatColor.RESET+format(msg));
         }if(p.hasPermission("pf.builder")){
-            e.setFormat(ChatColor.RESET+"\uE003 "+ChatColor.DARK_GREEN+ChatColor.BOLD+p.getName()+ChatColor.DARK_GRAY+" » "+ChatColor.RESET+msg);
+            e.setFormat(ChatColor.RESET+"\uE003 "+ChatColor.DARK_GREEN+ChatColor.BOLD+p.getName()+ChatColor.DARK_GRAY+" » "+ChatColor.RESET+format(msg));
         }if(p.hasPermission("pf.mod")){
-            e.setFormat(ChatColor.RESET+"\uE002 "+ChatColor.BLUE+ChatColor.BOLD+p.getName()+ChatColor.DARK_GRAY+" » "+ChatColor.RESET+msg);
+            e.setFormat(ChatColor.RESET+"\uE002 "+ChatColor.BLUE+ChatColor.BOLD+p.getName()+ChatColor.DARK_GRAY+" » "+ChatColor.RESET+format(msg));
         }if(p.hasPermission("pf.admin")){
-            e.setFormat(ChatColor.RESET+"\uE001 "+ChatColor.RED+ChatColor.BOLD+p.getName()+ChatColor.DARK_GRAY+" » "+ChatColor.RESET+msg);
+            e.setFormat(ChatColor.RESET+"\uE001 "+ChatColor.RED+ChatColor.BOLD+p.getName()+ChatColor.DARK_GRAY+" » "+ChatColor.RESET+format(msg));
         }if(p.hasPermission("pf.owner")){
-            e.setFormat(ChatColor.RESET+"\uE000 "+ChatColor.AQUA+ChatColor.BOLD+p.getName()+ChatColor.DARK_GRAY+" » "+ChatColor.RESET+msg);
+            e.setFormat(ChatColor.RESET+"\uE000 "+ChatColor.AQUA+ChatColor.BOLD+p.getName()+ChatColor.DARK_GRAY+" » "+ChatColor.RESET+format(msg));
         }
 
         if (!p.hasPermission("rank.premium")) {
-            chatcooldowns.put(p.getName(), 3);
+            Core.chatcooldowns.put(p.getName(), 3);
         }
     }
     @EventHandler
     public void onSendCmd(PlayerCommandPreprocessEvent e){
         Player p = e.getPlayer();
 
-        if (cmdcooldowns.containsKey(p.getName())){
+        if (Core.cmdcooldowns.containsKey(p.getName())){
             e.setCancelled(true);
-            p.sendMessage(PLname+ChatColor.RED+"Please wait "+cmdcooldowns.get(p.getName())+" second before send command.");
+            p.sendMessage(PluginName+ChatColor.RED+"Please wait "+ Core.cmdcooldowns.get(p.getName())+" second before send command.");
             return;
         }
         if (!p.hasPermission("rank.premium")) {
-            cmdcooldowns.put(p.getName(), 3);
+            Core.cmdcooldowns.put(p.getName(), 3);
         }
     }
 }

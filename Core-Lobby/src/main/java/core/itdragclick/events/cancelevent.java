@@ -1,5 +1,6 @@
 package core.itdragclick.events;
 
+import core.itdragclick.Core;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -39,15 +40,17 @@ public class cancelevent implements Listener {
         }
         e.setCancelled(true);
     }
-//    @EventHandler
-//    public void onPotion(EntityPotionEffectEvent e){
-//        if (e.getEntity() instanceof Player) {
-//            Player p = (Player) e.getEntity();
-//            if(p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.CREATIVE && e.getNewEffect().getType() != PotionEffectType.HUNGER) {
-//                e.setCancelled(true);
-//            }
-//        }
-//    }
+    @EventHandler
+    public void onChangeBlock(EntityChangeBlockEvent e){
+        if(e.getEntity() instanceof Player){
+            Player p = (Player) e.getEntity();
+            if (!(Core.build.contains(p.getName())) && e.getBlock().getType() != Material.BIG_DRIPLEAF) {
+                e.setCancelled(true);
+            }
+        }else{
+            e.setCancelled(true);
+        }
+    }
     @EventHandler
     public void onBreak(BlockBreakEvent e){
         Player p = e.getPlayer();
@@ -65,15 +68,21 @@ public class cancelevent implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
         if(e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            Material b = e.getClickedBlock().getType();
+            Block b = e.getClickedBlock();
             Player p = e.getPlayer();
-            if (b == Material.SPRUCE_TRAPDOOR) {
-                if (!(build.contains(p.getName()))) {
-                    e.setCancelled(true);
-                }
-            } else if (b == Material.DARK_OAK_TRAPDOOR) {
-                if (!(build.contains(p.getName()))) {
-                    e.setCancelled(true);
+            if (b != null) {
+                if (b.getType() == Material.SPRUCE_TRAPDOOR) {
+                    if (!(build.contains(p.getName()))) {
+                        e.setCancelled(true);
+                    }
+                } else if (b.getType() == Material.DARK_OAK_TRAPDOOR) {
+                    if (!(build.contains(p.getName()))) {
+                        e.setCancelled(true);
+                    }
+                } else if (b.getType().toString().contains("DOOR")) {
+                    if (!(build.contains(p.getName()))) {
+                        e.setCancelled(true);
+                    }
                 }
             }
         }

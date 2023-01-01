@@ -1,12 +1,12 @@
 package chasingclub.server.core.command;
 
-import chasingclub.server.core.Core;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 import java.util.StringJoiner;
@@ -15,7 +15,7 @@ import static chasingclub.server.core.Utils.Utils.PluginName;
 
 public class sudo implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, Command cmd, @NotNull String commandLabel, String[] args) {
         if (cmd.getName().equalsIgnoreCase("sudo")) {
             // Check perms
             if (!sender.hasPermission("rank.owner")){
@@ -53,7 +53,10 @@ public class sudo implements CommandExecutor {
                 }else if (args[1].toLowerCase(Locale.ENGLISH).startsWith("cmd:")){
                     message = message.replaceFirst("cmd:","/");
                     message = message.replaceFirst("CMD:","/");
-                    target.chat(message);
+                    StringJoiner cmds = new StringJoiner(" ");
+                    for(int i = 2; i < args.length; i++)
+                        cmds.add(args[i]);
+                    target.chat(message+" "+cmds);
                     return true;
                 }else{
                     sender.sendMessage(ChatColor.RED+"Something went wrong, please try again.");

@@ -2,7 +2,8 @@ package core.itdragclick.event;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import core.itdragclick.Pack.WhitelistAPI;
+import core.itdragclick.Utils.WhitelistAPI;
+import core.itdragclick.Utils.playerdataAPI;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -20,15 +21,21 @@ import java.net.URL;
 import java.sql.SQLException;
 
 import static core.itdragclick.Core.*;
-import static core.itdragclick.Database.*;
+import static core.itdragclick.Utils.Database.*;
 
 public class onJoin implements Listener {
     public WhitelistAPI getwhitelist(String uuid) throws SQLException {
         return findwhitelistbyuuid(uuid);
     }
+    public playerdataAPI getplayerdata(String uuid) throws SQLException {
+        return findplayerbyuuid(uuid);
+    }
     @EventHandler
     public void onPlayerJoin(ServerConnectEvent e) throws SQLException {
         ProxiedPlayer p = e.getPlayer();
+        if(!e.getReason().equals(ServerConnectEvent.Reason.JOIN_PROXY)){
+            return;
+        }
         // CHECK MAINTENANCE
         //////////////////////////////////////////////////////
         if (Boolean.TRUE.equals(maintenance.get("Maintenance"))){
@@ -52,21 +59,30 @@ public class onJoin implements Listener {
         try {
             loc = getCountry(ip);
         } catch (IOException ex) {
+            ex.printStackTrace();
             System.out.println(PLname+ ChatColor.RED+"Error IP not found!");
+            p.disconnect(ChatColor.RED+"Error: Something went wrong, please try again later.");
             return;
         }
-        try {
+        playerdataAPI data = getplayerdata(p.getUUID());
+        if(data == null){
             playerdataonfirstjoin(p, loc);
-            playerdataonjoin(p, loc);
-            checkuser(p);
-        } catch (SQLException ee) {
-            System.out.println(PLname+ ChatColor.RED+"Error Player not found!");
-            return;
+            for(ProxiedPlayer all : ProxyServer.getInstance().getPlayers()){
+                if(all.hasPermission("rank.staff")){
+                    all.sendMessage("§cAdmin §8» §5"+p.getName()+" §9join first time!");
+                }
+            }
+        }else {
+            try {
+                playerdataonjoin(p, loc);
+            } catch (SQLException ee) {
+                ee.printStackTrace();
+                System.out.println(PLname + ChatColor.RED + "Error Player not found!");
+                p.disconnect(ChatColor.RED + "Error: Something went wrong, please try again later.");
+                return;
+            }
         }
-        if(!e.getReason().equals(ServerConnectEvent.Reason.JOIN_PROXY)){
-            return;
-        }
-        if(!(p.hasPermission("staff.nolobby"))){
+        if(!(p.hasPermission("verify.bypass"))){
             boolean online;
             Socket s = new Socket();
             try {
@@ -78,18 +94,35 @@ public class onJoin implements Listener {
             }
             if(!online){
                 p.disconnect(ChatColor.RED+"The verification Server is null, please try again soon.");
-                return;
+                for(ProxiedPlayer all : ProxyServer.getInstance().getPlayers()){
+                    if(all.hasPermission("rank.mod")){
+                        all.sendMessage(PLname+p.getName()+" try to join the proxy but server \"checkpack\" is not online.");
+                    }
+                }
+            }else{
+                e.setTarget(ProxyServer.getInstance().getServerInfo("checkpack"));
+                for(ProxiedPlayer all : ProxyServer.getInstance().getPlayers()){
+                    if(all.hasPermission("rank.mod")){
+                        all.sendMessage(PLname+p.getName()+" just join the proxy | Server: \"checkpack\"");
+                    }
+                }
             }
-            e.setTarget(ProxyServer.getInstance().getServerInfo("checkpack"));
         }else{
             e.setTarget(ProxyServer.getInstance().getServerInfo("lobby"));
+            for(ProxiedPlayer all : ProxyServer.getInstance().getPlayers()){
+                if(all.hasPermission("rank.mod")){
+                    all.sendMessage(PLname+p.getName()+" just join the proxy | Server: \"lobby\"");
+                }
+            }
         }
     }
     @EventHandler
     public void onLogin(PostLoginEvent e){
         ProxiedPlayer p = e.getPlayer();
         String hostname = p.getPendingConnection().getVirtualHost().getHostName();
+        System.out.println(ChatColor.LIGHT_PURPLE+"****************************************");
         System.out.println(p.getName()+" join with hostname "+hostname);
+        System.out.println(ChatColor.LIGHT_PURPLE+"****************************************");
         if (!p.hasPermission("domain.bypass") && !hostname.contains(domain)){
             p.disconnect(wrongdomainkick);
         }
@@ -99,11 +132,11 @@ public class onJoin implements Listener {
         String uuid = e.getConnection().getUUID();
         ProxiedPlayer p = ProxyServer.getInstance().getPlayer(uuid);
         String PlayerIP = e.getConnection().getAddress().getAddress().getHostAddress();
-        if(p != null) {
-            for (ProxiedPlayer ap : ProxyServer.getInstance().getPlayers()) {
-                if (ap.getAddress().getAddress().getHostAddress().equals(PlayerIP)){
-                    p.disconnect(ChatColor.RED+"You have the same IPAddress on the server.\n"+ChatColor.GRAY+"You can contact staff in discord\n"+ChatColor.BLUE+"dsc.gg/ChasingClub");
-                }
+        for (ProxiedPlayer ap : ProxyServer.getInstance().getPlayers()) {
+            if (ap.getAddress().getAddress().getHostAddress().equals(PlayerIP) && !ap.hasPermission("ip.bypass")){
+                ap.disconnect(ChatColor.RED+"You have the same IPAddress on the server.\n"+ChatColor.GRAY+"You can contact staff in discord\n"+ChatColor.BLUE+"dsc.gg/ChasingClub");
+            }
+            if(p != null) {
                 if (ap.getName().equals(p.getName())) {
                     ap.disconnect(ChatColor.RED + "You logged in from another location!");
                 }

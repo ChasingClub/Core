@@ -1,6 +1,7 @@
 package core.itdragclick.Command;
 
 import core.itdragclick.Core;
+import core.itdragclick.Utils.VanishAPI;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -8,14 +9,22 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.StringJoiner;
 
 import static core.itdragclick.Core.*;
+import static core.itdragclick.Utils.Database.findvanishbyuuid;
 
 public class msg extends Command implements TabExecutor {
+    public VanishAPI isVanish(String uuid) {
+        try {
+            return findvanishbyuuid(uuid);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public msg(){
         super("msg","","w","message","minecraft:tell","minecraft:w","minecraft:msg");
     }
@@ -24,9 +33,14 @@ public class msg extends Command implements TabExecutor {
         if (args.length == 0) {
             sender.sendMessage(PLname+"/message <player> <message> - Send message to player you want");
             return;
-        }if (args.length == 1) {
-            ProxiedPlayer target = ProxyServer.getInstance().getPlayer(args[0]);
+        }
+        ProxiedPlayer target = ProxyServer.getInstance().getPlayer(args[0]);
+        if (args.length == 1) {
             if (target == null){
+                sender.sendMessage(PLname+ChatColor.RED+"That player is offline");
+                return;
+            }
+            if (isVanish(target.getUniqueId().toString()) != null && !sender.hasPermission("msg.vanish")){
                 sender.sendMessage(PLname+ChatColor.RED+"That player is offline");
                 return;
             }
@@ -36,7 +50,6 @@ public class msg extends Command implements TabExecutor {
             }
             sender.sendMessage(PLname+"/message "+target.getName()+" <message>");
         } else {
-            ProxiedPlayer target = ProxyServer.getInstance().getPlayer(args[0]);
             if (Core.msgcooldowns.get(sender.getName()) != null) {
                 Integer time = Core.msgcooldowns.get(sender.getName());
                 sender.sendMessage(ChatColor.RED + "You need to wait for " + time + " seconds to use this command.");
@@ -44,6 +57,10 @@ public class msg extends Command implements TabExecutor {
             }
             if (target == null){
                 sender.sendMessage(PLname+ChatColor.RED+"That player is offline.");
+                return;
+            }
+            if (isVanish(target.getUniqueId().toString()) != null && !sender.hasPermission("msg.vanish")){
+                sender.sendMessage(PLname+ChatColor.RED+"That player is offline");
                 return;
             }
             if (sender.getName().equals(target.getName())){
@@ -75,13 +92,12 @@ public class msg extends Command implements TabExecutor {
     }
     @Override
     public java.util.List<String> onTabComplete(CommandSender sender, String[] args) {
-        ProxiedPlayer p = (ProxiedPlayer) sender;
         if (args.length == 1) {
             ArrayList<String> playerNames = new ArrayList<>();
             ProxiedPlayer[] players = new ProxiedPlayer[ProxyServer.getInstance().getPlayers().size()];
             ProxyServer.getInstance().getPlayers().toArray(players);
             for (ProxiedPlayer player : players) {
-                if (!(player.getServer().getInfo().getName().equals(p.getServer().getInfo().getName()))) {
+                if (isVanish(player.getUniqueId().toString()) == null){
                     playerNames.add(player.getName());
                 }
             }
