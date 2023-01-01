@@ -29,7 +29,7 @@ import java.util.List;
 public class BouncingArrow implements Listener {
 
     public static final double MIN_MAGNITUDE_THRESHOLD = 0.6;
-    public static final int MAX_BOUNCE_COUNT = 4;
+    public static final int MAX_BOUNCE_COUNT = 10;
 
     private Core plugin;
 

@@ -1,0 +1,5 @@
+name: Struct Randomizer
+version: '${project.version}'
+main: cc.pinont.Core
+api-version: 1.19
+authors: [ Pinont ]
