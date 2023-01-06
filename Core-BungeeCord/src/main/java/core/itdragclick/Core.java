@@ -3,10 +3,9 @@ package core.itdragclick;
 import core.itdragclick.Command.*;
 import core.itdragclick.Command.maintenance.maintenance;
 import core.itdragclick.Command.whitelist.whitelist;
-import core.itdragclick.event.onJoin;
-import core.itdragclick.event.onKick;
-import core.itdragclick.event.onLeave;
-import core.itdragclick.event.onPing;
+import core.itdragclick.Utils.Database;
+import core.itdragclick.Utils.DiscordWebhook;
+import core.itdragclick.event.*;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -18,22 +17,20 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static core.itdragclick.Database.playerdatatable;
 public class Core extends Plugin {
     // DATABASE
     ////////////////////////////////////////
-    public static String ip = "45.136.254.232";
-    public static String database = "s5_guild";
-    public static String username = "u5_bTgCDSXpXW";
-    public static String password = "1PNS8PDS8Rmhz=L+7KcV5x+b";
+    public static String ip = "mysql-pinont-do-user-13206302-0.b.db.ondigitalocean.com:25060";
     ////////////////////////////////////////
-    public static String database2 = "s5_player_data";
-    public static String username2 = "u5_hEViet8QSJ";
-    public static String password2 = "@CE7=^7Jc^RU0Ct^NqtfNFeY";
+    public static String database2 = "s1_player_data";
+    public static String username2 = "u1_pVCFwUUkYz";
+    public static String password2 = "JDZlR3n!^MYao@jLCRKXkH^N";
     ////////////////////////////////////////
-    public static String domain = "mc.pinont.ml";
-    public static Integer kicktimes = 2;
-    public static HashMap<String, Integer> FlagKicks = new HashMap<>();
+    public static String database3 = "s1_vanish";
+    public static String username3 = "u1_iTyBvnbOJ4";
+    public static String password3 = "3W!^n.rSUU.TT92OHEdgfwrI";
+    ////////////////////////////////////////
+    public static String domain = "chasingclub.net";
     public static HashMap<String, String> reasons = new HashMap<>();
     public static HashMap<String ,Boolean> whitelist = new HashMap<>();
     public static ArrayList<String> spylist = new ArrayList<>();
@@ -48,9 +45,13 @@ public class Core extends Plugin {
     public static String maintenancekickmsg = PL+"\n\n"+ChatColor.RED+"The server is in maintenance mode.\n\n"+ChatColor.GRAY+"Contact Staff in discord\n"+ChatColor.BLUE+ChatColor.BOLD+"Discord "+ChatColor.DARK_GRAY+"» "+ChatColor.AQUA+ChatColor.UNDERLINE+"https://dsc.gg/chasingclub";
     public static String wrongdomainkick = PL+"\n\n"+ChatColor.RED+"You join with an unavailable domain.\n"+ChatColor.RED+"Please join with "+ChatColor.YELLOW+domain+ChatColor.RED+".\n\n"+ChatColor.GRAY+"Contact Staff in discord\n"+ChatColor.BLUE+ChatColor.BOLD+"Discord "+ChatColor.DARK_GRAY+"» "+ChatColor.AQUA+ChatColor.UNDERLINE+"https://dsc.gg/chasingclub";
     public static HashMap<String, Integer> reportcooldowns;
+    public static HashMap<String, Integer> bugreportcooldowns;
     public static HashMap<String, Integer> msgcooldowns;
     public static String webhookURL = "https://discord.com/api/webhooks/1001889150129152150/L6a_4y0kUKtP_OJ-JO2wnP--1ZBduqdhge4EcgAkZgmF-8bevBC7hUBxF9JVvLQDalYy";
     public static String webhookReport = "https://discord.com/api/webhooks/1004785775709257858/6OR4mymG8QkxsyhPAkklN7gwORTI5fr3l5BNKopXCvrfb-UcUPuVPX92OLOVLv915ToL";
+    public static void reload(){
+        onPing.onIcon();
+    }
     public void msgconsole(String msg){
         getLogger().info(msg);
     }
@@ -59,6 +60,8 @@ public class Core extends Plugin {
     public void onEnable() {
         // Set TimeZone
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Bangkok"));
+        // RELOAD
+        reload();
         // Register Commands
         getProxy().getPluginManager().registerCommand(this, new ReportCommand());
         getProxy().getPluginManager().registerCommand(this, new LobbyCommand());
@@ -68,10 +71,14 @@ public class Core extends Plugin {
         getProxy().getPluginManager().registerCommand(this, new rules());
         getProxy().getPluginManager().registerCommand(this, new whitelist());
         getProxy().getPluginManager().registerCommand(this, new maintenance());
+        getProxy().getPluginManager().registerCommand(this, new hash());
+        getProxy().getPluginManager().registerCommand(this, new bugadmin());
         getProxy().getPluginManager().registerCommand(this, new spy());
+        getProxy().getPluginManager().registerCommand(this, new bugreport());
         getProxy().getPluginManager().registerCommand(this, new discord());
 //        getProxy().getPluginManager().registerCommand(this, new fakeplugin());
         // Register Events
+//        getProxy().getPluginManager().registerListener(this, new onTab());
         getProxy().getPluginManager().registerListener(this, new onJoin());
         getProxy().getPluginManager().registerListener(this, new onLeave());
         getProxy().getPluginManager().registerListener(this, new onKick());
@@ -99,8 +106,9 @@ public class Core extends Plugin {
         msgconsole(PLname+ChatColor.GREEN+"has been loaded!");
         Database database = new Database();
         try {
-            database.initializeDatabase();
-            playerdatatable();
+            database.initializeDatabase2();
+            database.playerdatatable();
+            database.initializeDatabase3();
             msgconsole(PLname+"database is loading....\n\n");
             msgconsole(ChatColor.GREEN+"███╗░░░███╗██╗░░░██╗░██████╗░██████╗░██╗░░░░░");
             msgconsole(ChatColor.GREEN+"████╗░████║╚██╗░██╔╝██╔════╝██╔═══██╗██║░░░░░");
@@ -113,15 +121,16 @@ public class Core extends Plugin {
             msgconsole(ChatColor.YELLOW+"=----------------------------------=");
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("Could not initialize database.");
+            System.out.println(PLname+ChatColor.RED+"Could not initialize database.");
         }
         msgconsole(PLname+"Connected to database.");
         reportcooldowns = new HashMap<>();
         msgcooldowns = new HashMap<>();
+        bugreportcooldowns = new HashMap<>();
         getProxy().getScheduler().schedule(this, () -> {
             onDelay();
             onDelay2();
-//            System.out.println(lastmsg);
+            onDelay3();
             for (ProxiedPlayer a : ProxyServer.getInstance().getPlayers()) {
                 if ((a.hasPermission("report.bypass"))) {
                     reportcooldowns.remove(a.getName());
@@ -131,10 +140,12 @@ public class Core extends Plugin {
         // CHECK THE MYSQL
         getProxy().getScheduler().schedule(this, () -> {
             try {
-                database.initializeDatabase();
-                playerdatatable();
+                database.getConnection3();
+                database.getConnection2();
+                database.getConnectiondata();
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
+                System.out.println(PLname+ChatColor.RED+"Could not initialize database.");
             }
         }, 0, 60, TimeUnit.MINUTES);
     }
@@ -181,6 +192,16 @@ public class Core extends Plugin {
             }
         }
         msgcooldowns = temp;
+    }
+    public void onDelay3(){
+        HashMap<String, Integer> temp = new HashMap<>();
+        for (String plrname : bugreportcooldowns.keySet()){
+            int timer = bugreportcooldowns.get(plrname) - 1;
+            if (timer >= 0){
+                temp.put(plrname, timer);
+            }
+        }
+        bugreportcooldowns = temp;
     }
     public void sendlogo(){
         msgconsole("\n");

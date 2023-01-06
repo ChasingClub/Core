@@ -1,6 +1,7 @@
 package chasingclub.server.core.events;
 
 import chasingclub.server.core.Core;
+import chasingclub.server.core.Utils.DuelStatsSQLAPI;
 import chasingclub.server.core.Utils.KitSQLAPI;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -26,6 +27,13 @@ public class joinEvent implements Listener {
             throw new RuntimeException(e);
         }
     }
+    public DuelStatsSQLAPI GetPlayerDuelStats(String uuid){
+        try {
+            return FindDuelStatsByPlayerUUID(uuid);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public joinEvent(Core plugin){
         this.plugin = plugin;
     }
@@ -37,11 +45,13 @@ public class joinEvent implements Listener {
         }
         Core.gotkit.put(p.getName(), false);
         KitSQLAPI data = GetPlayerKit(p.getUniqueId().toString());
+        DuelStatsSQLAPI data2 = GetPlayerDuelStats(p.getUniqueId().toString());
         if(data == null){
             try {
                 AddKit(p);
             } catch (SQLException ex) {
                 p.sendMessage(error);
+                p.kickPlayer("Please, contact staff.");
             }
             Core.kits.put(p,"Default");
             p.sendMessage(PluginName+"You are currently select "+ChatColor.GREEN+"Default");
@@ -61,6 +71,15 @@ public class joinEvent implements Listener {
             }
             Core.kits.put(p, KitName);
             p.sendMessage(PluginName+"You are currently select "+ChatColor.GREEN+KitName);
+        }
+        if(data2 == null){
+            try {
+                AddDuel(p);
+            } catch (SQLException ex) {
+                p.sendMessage(error);
+                p.kickPlayer("Please, contact staff.");
+                return;
+            }
         }
         if (p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR){
             p.setGameMode(GameMode.ADVENTURE);

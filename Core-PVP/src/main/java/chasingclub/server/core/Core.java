@@ -43,8 +43,7 @@ import java.util.List;
 import static chasingclub.server.core.API.Prefix.SetTeamPrefix;
 import static chasingclub.server.core.Utils.Database.*;
 import static chasingclub.server.core.Utils.Database.UpdateKit;
-import static chasingclub.server.core.Utils.Utils.PluginName;
-import static chasingclub.server.core.Utils.Utils.error;
+import static chasingclub.server.core.Utils.Utils.*;
 import static chasingclub.server.core.command.givekit.givekite;
 
 public class Core extends JavaPlugin implements Listener, CommandExecutor {
@@ -143,13 +142,15 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
             reloadConfig(); //reloads the config
         }
         reload();
+        HotbarGui.UI_initialize();
         // Add String Arraylist/HashMap
-        maps.put("Colosseum", true);maps.put("Beach", true);maps.put("Abyss", true);
+        maps.put("Colosseum", true);maps.put("Beach", true);maps.put("Abyss", true);maps.put("Colosseum2", true);
         anti.put("8a490d62-98bd-4f57-b4a6-e4738b0beb96", "1");anti.put("0ab56496-71f6-4205-8e16-ec21dd7bfd5e", "2");anti.put("30c8f2de-9dc6-450c-bc31-4c20db77a29b", "3");
         playerkits.put("Default", 1);playerkits.put("Trident", 2);playerkits.put("Viking", 3);playerkits.put("Archer", 4);playerkits.put("Admin", 5);
         duel.put("invite", "1");duel.put("accept", "2");duel.put("reject", "3");
         //"NetheriteStack, DodgeBall, Paintball, ClassicIron, ClassicDiamond, OP, Crystal"
         games.put("netheritestack", "1");
+        games.put("classicsword", "2");
         // add lore
         lore.add("§r");
         lore.add("§7Right Click to open kit selector menu!");
@@ -160,9 +161,12 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         getCommand("spawn").setExecutor(new spawn(this));
         getCommand("setspawn").setExecutor(new setspawn(this));
         getCommand("core").setExecutor(new core(this));
+        getCommand("invslot").setExecutor(new invslot());
         getCommand("getkit").setExecutor(new kits());
         getCommand("feed").setExecutor(new feed());
         getCommand("heal").setExecutor(new health());
+        getCommand("f").setExecutor(new f());
+        getCommand("fade").setExecutor(new fade());
         getCommand("gmc").setExecutor(new gmc());
         getCommand("gma").setExecutor(new gma());
         getCommand("gms").setExecutor(new gms());
@@ -179,6 +183,7 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         getCommand("kaboom").setExecutor(new kaboom());
         getCommand("map").setExecutor(new map());
         getCommand("fly").setExecutor(new fly());
+        getCommand("ping").setExecutor(new ping());
 //        getCommand("perm").setExecutor(new givePermission());
 
         // register Tab Argrument for Command
@@ -195,6 +200,7 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
 
         // register Event
         getServer().getPluginManager().registerEvents(new Vanish(), this);
+        getServer().getPluginManager().registerEvents(new classic_sword(this), this);
         getServer().getPluginManager().registerEvents(new dia_to_netherite(this), this);
         getServer().getPluginManager().registerEvents(new slotitem(), this);
         getServer().getPluginManager().registerEvents(new launcher(this), this);
@@ -202,6 +208,7 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         getServer().getPluginManager().registerEvents(new joinEvent(this), this);
         getServer().getPluginManager().registerEvents(new Bhopping(), this);
         getServer().getPluginManager().registerEvents(new Chat(), this);
+        getServer().getPluginManager().registerEvents(new GUI(), this);
         getServer().getPluginManager().registerEvents(new Respawn(this), this);
         getServer().getPluginManager().registerEvents(new heal(), this);
         getServer().getPluginManager().registerEvents(new LeaveEvent(this), this);
@@ -228,6 +235,8 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         try {
             database.initializeDatabase();
             database.initializeDatabase2();
+            database.initializeDatabase3();
+            database.initializeDatabase4();
         } catch (SQLException e) {
             e.printStackTrace();
             msgconsole(ChatColor.RED+"Could not initialize database.");
@@ -329,26 +338,27 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
                 try {
                     database.getConnection();
                     database.getConnection2();
+                    database.getConnection3();
                     msgconsole(ChatColor.YELLOW+"=----------------------------------=");
                     msgconsole(PluginName+"Reconnecting to database.");
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    msgconsole(ChatColor.RED+"Could not initialize database.");
+                    msgconsole(ChatColor.RED+"Could not connect to database.");
                     msgconsole(ChatColor.YELLOW+"=----------------------------------=");
                     return;
                 }
                 msgconsole(PluginName+"Reconnected to database.");
                 msgconsole(ChatColor.YELLOW+"=----------------------------------=");
             }
-        }.runTaskTimer(this, 0L, 12000L);
+        }.runTaskTimer(this, 0L, 2400L);
     }
     public void pariclespawn(){
         World world = Bukkit.getServer().getWorld("world");
         if(world == null){return;}
-        Location loc1 = new Location(world, 270, 177, 270);
-        Location loc2 = new Location(world, 270, 177, 242);
-        Location loc3 = new Location(world, 242, 177, 242);
-        Location loc4 = new Location(world, 242, 177, 270);
+        Location loc1 = new Location(world, 270.5, 177, 270.5);
+        Location loc2 = new Location(world, 270.5, 177, 242.5);
+        Location loc3 = new Location(world, 242.5, 177, 242.5);
+        Location loc4 = new Location(world, 242.5, 177, 270.5);
         for (Player ap : Bukkit.getServer().getOnlinePlayers()) {
             ap.spawnParticle(Particle.VILLAGER_HAPPY, loc1, 12, 1, 0.5, 1);
             ap.spawnParticle(Particle.VILLAGER_HAPPY, loc2, 12, 1, 0.5, 1);
@@ -722,20 +732,23 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         List<String> sl = config.getStringList("deadmsg");
         String s = sl.get(r.nextInt(sl.size()));
         if (killer != null) {
+            if(killer.getWorld().getName().equals("world")) {
+                killer.getInventory().remove(Material.ARROW);
+                killer.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE, 1));
+                killer.getInventory().setItem(9, new ItemStack(Material.ARROW, 48));
+            }
             World SessionWorldNeth = Bukkit.getServer().getWorld("Netherite_game");
             if (killer.getName().equals(p.getName())) {
-                World SessionWorld = Bukkit.getServer().getWorld("world");
-                Location SessionWorldSpawn = new Location(SessionWorld, 64.5, 180.5, 26.5);
                 if (p.getWorld() != SessionWorldNeth) {
-                    p.teleport(SessionWorldSpawn);
+                    p.setBedSpawnLocation(spawnloc);
                     p.getInventory().clear();
                     for (PotionEffect effect : p.getActivePotionEffects())
                         p.removePotionEffect(effect.getType());
                 }
-                Bukkit.broadcastMessage(ChatColor.RED + p.getName() + ChatColor.YELLOW + " has killed themself by accident.");
+                Bukkit.broadcastMessage(GetPrefixPlayer(p)+ChatColor.RED + p.getName() + ChatColor.YELLOW + " has killed themself by accident.");
                 return;
             }
-            Bukkit.broadcastMessage(ChatColor.RED + p.getName() + ChatColor.YELLOW + s + ChatColor.DARK_AQUA + killer.getName());
+            Bukkit.broadcastMessage(GetPrefixPlayer(p)+ChatColor.RED + p.getName() + ChatColor.YELLOW + s + GetPrefixPlayer(killer)+ChatColor.DARK_AQUA + killer.getName());
         }
     }
     @EventHandler

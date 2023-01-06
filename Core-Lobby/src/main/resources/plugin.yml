@@ -6,11 +6,15 @@ author: 'ItDragClick'
 description: Custom PRAF Plugin Made by ItDragCLick
 depend:
   - Vanish
+  - PlaceholderAPI
 
 commands:
   test:
     description: test command
     usage: /test
+  ping:
+    description: ping command
+    usage: /ping
 
   setspawn:
     description: setspawn command

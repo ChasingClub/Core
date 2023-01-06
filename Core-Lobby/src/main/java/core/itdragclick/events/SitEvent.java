@@ -1,11 +1,10 @@
 package core.itdragclick.events;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.type.Stairs;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -16,6 +15,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.spigotmc.event.entity.EntityDismountEvent;
+
+import java.util.List;
 
 import static core.itdragclick.Core.sitting;
 
@@ -62,6 +63,12 @@ public class SitEvent implements Listener {
         }
         Location location = b.getLocation();
         World world = location.getWorld();
+        List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location.subtract(-0.5, 1.1, -0.5), 1, 1, 1);
+            for (Entity entity : entities){
+                if(entity instanceof ArmorStand && ((ArmorStand) entity).isInvisible()){
+                    return;
+                }
+            }
         float yaw = 0f;
         if (b.getBlockData().getAsString().contains("facing=east")){
             yaw = 90f;
@@ -74,7 +81,7 @@ public class SitEvent implements Listener {
         }
         location.setYaw(yaw);
 
-        ArmorStand chair = (ArmorStand) world.spawnEntity(location.subtract(-0.5, 1.1, -0.5), EntityType.ARMOR_STAND);
+        ArmorStand chair = (ArmorStand) world.spawnEntity(location.subtract(0, 0, 0), EntityType.ARMOR_STAND);
         chair.setGravity(false);
         chair.setVisible(false);
         chair.setInvulnerable(true);

@@ -71,5 +71,10 @@
             <version>1.19-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>io.github.waterfallmc</groupId>
+            <artifactId>waterfall-chat</artifactId>
+            <version>1.19-R0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

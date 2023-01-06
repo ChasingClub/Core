@@ -21,15 +21,12 @@ public class openmenu implements Listener {
         if (!(eq == EquipmentSlot.HAND)) {return;}
 
         if(act == Action.RIGHT_CLICK_BLOCK){
-            if(p.getItemInHand().getType() == Material.COMPASS){
+            if(p.getItemInHand().getType() == Material.STICK && p.getItemInHand().getItemMeta().hasCustomModelData() && p.getItemInHand().getItemMeta().getCustomModelData() == 1){
                 Bukkit.dispatchCommand(p,"dm open warp");
-                return;
             }
-        }
-        if(act == Action.RIGHT_CLICK_AIR){
-            if(p.getItemInHand().getType() == Material.COMPASS){
+        }else if(act == Action.RIGHT_CLICK_AIR){
+            if(p.getItemInHand().getType() == Material.STICK && p.getItemInHand().getItemMeta().hasCustomModelData() && p.getItemInHand().getItemMeta().getCustomModelData() == 1){
                 Bukkit.dispatchCommand(p,"dm open warp");
-                return;
             }
         }
     }

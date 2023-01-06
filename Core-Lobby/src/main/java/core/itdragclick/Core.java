@@ -2,9 +2,11 @@ package core.itdragclick;
 
 import core.itdragclick.Commands.*;
 import core.itdragclick.Commands.Core.core;
+import core.itdragclick.Utils.Cuboid;
 import core.itdragclick.Utils.Database;
 import core.itdragclick.Utils.DiscordWebhook;
 import core.itdragclick.events.*;
+import core.itdragclick.hook.PlaceholderExpansion;
 import org.bukkit.ChatColor;
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -14,9 +16,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -33,8 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static core.itdragclick.API.Prefix.SetTeamPrefix;
-import static core.itdragclick.Utils.Utils.PluginName;
-import static core.itdragclick.events.inventory.CraftingSlot;
+import static core.itdragclick.Utils.Utils.*;
 
 public class Core extends JavaPlugin implements Listener, CommandExecutor {
     public static String PLname = PluginName;
@@ -81,24 +79,32 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
     public void onEnable() {
         File file = new File(getDataFolder() + File.separator + "config.yml"); //This will get the config file
 
-        if (!file.exists()){ //This will check if the file exist
+        if (!file.exists()) { //This will check if the file exist
             getConfig().options().copyDefaults(true); //function to check the important settings
             saveConfig(); //saves the config
             reloadConfig(); //reloads the config
         }
         reload();
-        for (Player p : getServer().getOnlinePlayers()){
-            if (p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR){
+        for (Player p : getServer().getOnlinePlayers()) {
+            if (p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR) {
                 p.teleport(spawnloc);
+                if(p.hasPermission("rank.vip")) {
+                    p.setAllowFlight(true);
+                }
                 p.getInventory().clear();
                 getserverselect(p);
+                getprofileitem(p);
+                getcosmeticitem(p);
+                getsettingsitem(p);
             }
-            p.sendMessage(PLname+"Core plugin have been reloaded!");
+            p.sendMessage(PLname + "Core plugin have been reloaded!");
         }
         // Set Normal TimeZone
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Bangkok"));
         // Add HashMap
-        anti.put("8a490d62-98bd-4f57-b4a6-e4738b0beb96", "1");anti.put("0ab56496-71f6-4205-8e16-ec21dd7bfd5e", "2");anti.put("30c8f2de-9dc6-450c-bc31-4c20db77a29b", "3");
+        anti.put("8a490d62-98bd-4f57-b4a6-e4738b0beb96", "1");
+        anti.put("0ab56496-71f6-4205-8e16-ec21dd7bfd5e", "2");
+        anti.put("30c8f2de-9dc6-450c-bc31-4c20db77a29b", "3");
 
         // Register Commands
         getCommand("feed").setExecutor(new feed());
@@ -118,6 +124,7 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         getCommand("fly").setExecutor(new fly());
         getCommand("sudo").setExecutor(new sudo());
         getCommand("core").setExecutor(new core(this));
+        getCommand("ping").setExecutor(new ping());
         getCommand("test").setExecutor(this);
         // Register Events
         getServer().getPluginManager().registerEvents(new slotitem(), this);
@@ -132,14 +139,20 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         getServer().getPluginManager().registerEvents(new BADWords(), this);
         getServer().getPluginManager().registerEvents(new openmenu(), this);
         getServer().getPluginManager().registerEvents(new Bhopping(), this);
-        getServer().getPluginManager().registerEvents(this,this);
+        getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new SitEvent(), this);
         getServer().getPluginManager().registerEvents(new adminfireball(), this);
         getServer().getPluginManager().registerEvents(new Chat(), this);
         //IDK
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        //PlaceholderAPI Register
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new PlaceholderExpansion().register();
+        } else {
+            msgconsole(ChatColor.RED + "PlaceholderAPI is not enabled!");
+        }
         // Plugin startup logic
-        msgconsole(PLname+"has been enabled");
+        msgconsole(PLname + "has been enabled");
         // Discord Webhook Started
         if (Webhook.equals("true")) {
             DiscordWebhook webhook = new DiscordWebhook(webhookURL);
@@ -151,7 +164,7 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
             );
             try {
                 webhook.execute();
-            }catch (IOException e){
+            } catch (IOException e) {
                 getLogger().severe(Arrays.toString(e.getStackTrace()));
             }
         }
@@ -160,62 +173,81 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
             world.setDifficulty(Difficulty.PEACEFUL);
         }
         Database database = new Database(this);
-        msgconsole(PLname+"database is loading....\n\n");
-        msgconsole(ChatColor.GREEN+"███╗░░░███╗██╗░░░██╗░██████╗░██████╗░██╗░░░░░");
-        msgconsole(ChatColor.GREEN+"████╗░████║╚██╗░██╔╝██╔════╝██╔═══██╗██║░░░░░");
-        msgconsole(ChatColor.GREEN+"██╔████╔██║░╚████╔╝░╚█████╗░██║██╗██║██║░░░░░");
-        msgconsole(ChatColor.GREEN+"██║╚██╔╝██║░░╚██╔╝░░░╚═══██╗╚██████╔╝██║░░░░░");
-        msgconsole(ChatColor.GREEN+"██║░╚═╝░██║░░░██║░░░██████╔╝░╚═██╔═╝░███████╗");
-        msgconsole(ChatColor.GREEN+"╚═╝░░░░░╚═╝░░░╚═╝░░░╚═════╝░░░░╚═╝░░░╚══════╝");
-        msgconsole(ChatColor.YELLOW+"=----------------------------------=");
-        msgconsole(PLname+"Connecting to database.");
-        msgconsole(ChatColor.YELLOW+"=----------------------------------=");
+        msgconsole(PLname + "database is loading....\n\n");
+        msgconsole(ChatColor.GREEN + "███╗░░░███╗██╗░░░██╗░██████╗░██████╗░██╗░░░░░");
+        msgconsole(ChatColor.GREEN + "████╗░████║╚██╗░██╔╝██╔════╝██╔═══██╗██║░░░░░");
+        msgconsole(ChatColor.GREEN + "██╔████╔██║░╚████╔╝░╚█████╗░██║██╗██║██║░░░░░");
+        msgconsole(ChatColor.GREEN + "██║╚██╔╝██║░░╚██╔╝░░░╚═══██╗╚██████╔╝██║░░░░░");
+        msgconsole(ChatColor.GREEN + "██║░╚═╝░██║░░░██║░░░██████╔╝░╚═██╔═╝░███████╗");
+        msgconsole(ChatColor.GREEN + "╚═╝░░░░░╚═╝░░░╚═╝░░░╚═════╝░░░░╚═╝░░░╚══════╝");
+        msgconsole(ChatColor.YELLOW + "=----------------------------------=");
+        msgconsole(PLname + "Connecting to database.");
+        msgconsole(ChatColor.YELLOW + "=----------------------------------=");
         try {
             database.initializeDatabase();
         } catch (SQLException e) {
             e.printStackTrace();
-            msgconsole(ChatColor.RED+"Could not initialize database.");
-            msgconsole(ChatColor.YELLOW+"=----------------------------------=");
+            msgconsole(ChatColor.RED + "Could not initialize database.");
+            msgconsole(ChatColor.YELLOW + "=----------------------------------=");
         }
-        msgconsole(PLname+"Connected to database.");
-        msgconsole(ChatColor.YELLOW+"=----------------------------------=");
-        new BukkitRunnable()
-        {
+        msgconsole(PLname + "Connected to database.");
+        msgconsole(ChatColor.YELLOW + "=----------------------------------=");
+        new BukkitRunnable() {
             @Override
-            public void run(){
+            public void run() {
                 TabList();
                 Chat();
                 CMD();
-                CraftingSlot();
-                for (Player ap : Bukkit.getServer().getOnlinePlayers()){
-                    if(ap.getGameMode() != GameMode.CREATIVE && ap.getGameMode() != GameMode.SPECTATOR){
+                for (Player ap : Bukkit.getServer().getOnlinePlayers()) {
+                    if (ap.getGameMode() != GameMode.CREATIVE && ap.getGameMode() != GameMode.SPECTATOR) {
                         ap.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 200000, 0, false, false));
-                    }else{
+                    } else {
                         ap.removePotionEffect(PotionEffectType.HUNGER);
                     }
                 }
             }
         }.runTaskTimer(this, 0, 20);
-        new BukkitRunnable()
-        {
+        new BukkitRunnable() {
             @Override
-            public void run(){
+            public void run() {
+                onRankRoom();
+            }
+        }.runTaskTimer(this, 0, 1);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
                 try {
                     database.getConnection();
-                    msgconsole(ChatColor.YELLOW+"=----------------------------------=");
-                    msgconsole(PLname+"Reconnecting to database.");
+                    msgconsole(ChatColor.YELLOW + "=----------------------------------=");
+                    msgconsole(PLname + "Reconnecting to database.");
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    msgconsole(ChatColor.RED+"Could not initialize database.");
-                    msgconsole(ChatColor.YELLOW+"=----------------------------------=");
+                    msgconsole(ChatColor.RED + "Could not initialize database.");
+                    msgconsole(ChatColor.YELLOW + "=----------------------------------=");
                     return;
                 }
-                msgconsole(PLname+"Reconnected to database.");
-                msgconsole(ChatColor.YELLOW+"=----------------------------------=");
+                msgconsole(PLname + "Reconnected to database.");
+                msgconsole(ChatColor.YELLOW + "=----------------------------------=");
             }
-        }.runTaskTimer(this, 0L, 12000L);
+        }.runTaskTimer(this, 0L, 2400L);
     }
-
+    public void onRankRoom(){
+        for(Player p : Bukkit.getServer().getOnlinePlayers()){
+            Cuboid cuboid = new Cuboid(Bukkit.getWorld(worldspawn),15, 71, 8, 7, 74, -1);
+            Cuboid cuboid2 = new Cuboid(Bukkit.getWorld(worldspawn),6, 74, 6, -6, 71, 14);
+            Location loctp = new Location(Bukkit.getWorld(worldspawn),14, 71, 10,180f, 0f);
+            if(cuboid.contains(p.getLocation()) && !p.hasPermission("rank.vip")){
+                p.teleport(loctp);
+                p.sendMessage("§9§lGuard §8» §c§nOnly VIP rank or higher can come in this room!");
+                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 10, 1);
+            }
+            if(cuboid2.contains(p.getLocation()) && !p.hasPermission("rank.vip")){
+                p.teleport(loctp);
+                p.sendMessage("§9§lGuard §8» §c§nOnly VIP rank or higher can come in this room!");
+                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 10, 1);
+            }
+        }
+    }
     public void Chat(){
         HashMap<String, Integer> temp = new HashMap<>();
         for (String plrname : chatcooldowns.keySet()){
@@ -238,26 +270,6 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
     }
     public void TabList(){
         SetTeamPrefix();
-    }
-    public static void getserverselect(Player p){
-
-        PlayerInventory inv = p.getInventory();
-
-        ItemStack compass = new ItemStack(Material.COMPASS, 1);
-
-        ItemMeta im = compass.getItemMeta();
-
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add("§7");
-        lore.add("§7Right Click to open the Server Selector!");
-        im.setDisplayName("§a§lServer Selector §7(Right Click)");
-        im.setLore(lore);
-
-        compass.setItemMeta(im);
-        if (p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR){
-            inv.clear();
-            inv.setItem(4, compass);
-        }
     }
     public String getDate(){
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Bangkok"));
@@ -313,18 +325,4 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         }
         return true;
     }
-//    private final SitUtils utils = new SitUtils(this);
-//    public SitUtils getSitUtils() {
-//        return utils;
-//    }
-//    private final PlayerSitData psitdata = new PlayerSitData(this);
-//
-//    public PlayerSitData getPlayerSitData() {
-//        return psitdata;
-//    }
-//    private final ChairsConfig config2 = new ChairsConfig(this);
-//
-//    public ChairsConfig getChairsConfig() {
-//        return config2;
-//    }
 }

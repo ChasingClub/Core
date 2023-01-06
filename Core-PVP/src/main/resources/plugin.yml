@@ -2,7 +2,9 @@ name: 'Core'
 version: 1.9.2
 main: chasingclub.server.core.Core
 api-version: 1.19
-authors: [ 'Pinont','ItDragClick' ]
+author: ItDragClick
+authors:
+  - Pinont
 description: Plugin for main server ChasingClub
 depend:
   - Vanish
@@ -12,6 +14,26 @@ commands:
   setspawn:
     description: set the spawn
     usage: /setspawn
+
+  invslot:
+    description: invslot command
+    usage: /invslot
+
+  f:
+    description: ffffff
+    usage: /f
+
+  fade:
+    description: test command
+    usage: /fade
+
+  ping:
+    description: ping command
+    usage: /ping
+    aliases:
+      - howmuchping
+      - tfping
+      - wtfping
 
   enderchest:
     description: enderchest

@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import vanish.itdragclick.api.vanish.VanishAPI;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -30,9 +31,14 @@ public class Chat implements Listener {
             e.setCancelled(true);
             return;
         }
+        if (Core.chatcooldowns.containsKey(p.getName())){
+            e.setCancelled(true);
+            p.sendMessage(PluginName+ChatColor.RED+"Please wait "+ Core.chatcooldowns.get(p.getName())+" second before send message.");
+            return;
+        }
         String[] split = msg.split(" ");
         for (final Player ap : Bukkit.getOnlinePlayers()) {
-            if (ap != e.getPlayer()) {
+            if (ap != e.getPlayer() && !VanishAPI.isInvisible(ap)) {
                 if(Arrays.asList(split).contains(ap.getName())) {
                     ap.playSound(ap.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10000, 2);
                     msg = msg.replaceAll(ap.getName(), ChatColor.YELLOW + ap.getName() + ChatColor.RESET);
@@ -52,11 +58,6 @@ public class Chat implements Listener {
         }
         if(p.hasPermission("rank.emoji")){
             msg = msg.replaceAll("\\\\o",ChatColor.LIGHT_PURPLE+"\\\\(ﾟ◡ﾟ )"+ChatColor.RESET);
-        }
-        if (Core.chatcooldowns.containsKey(p.getName())){
-            e.setCancelled(true);
-            p.sendMessage(PluginName+ChatColor.RED+"Please wait "+ Core.chatcooldowns.get(p.getName())+" second before send message.");
-            return;
         }
         e.setMessage(msg);
         if(p.hasPermission("pf.default")){
