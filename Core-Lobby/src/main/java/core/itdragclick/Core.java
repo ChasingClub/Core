@@ -77,6 +77,11 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
     }
     @Override
     public void onEnable() {
+        registerCommand();
+        registerEvent();
+        registerPAPI();
+        loadDataBase();
+
         File file = new File(getDataFolder() + File.separator + "config.yml"); //This will get the config file
 
         if (!file.exists()) { //This will check if the file exist
@@ -106,26 +111,12 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         anti.put("0ab56496-71f6-4205-8e16-ec21dd7bfd5e", "2");
         anti.put("30c8f2de-9dc6-450c-bc31-4c20db77a29b", "3");
 
-        // Register Commands
-        getCommand("feed").setExecutor(new feed());
-        getCommand("heal").setExecutor(new health());
-        getCommand("gmc").setExecutor(new gmc());
-        getCommand("gma").setExecutor(new gma());
-        getCommand("gms").setExecutor(new gms());
-        getCommand("gmsp").setExecutor(new gmsp());
-        getCommand("spawn").setExecutor(new spawn(this));
-        getCommand("setspawn").setExecutor(new setspawn(this));
-        getCommand("enderchest").setExecutor(new enderchest());
-        getCommand("earape").setExecutor(new earape());
-        getCommand("crash").setExecutor(new crash());
-        getCommand("b").setExecutor(new build());
-        getCommand("fling").setExecutor(new fling());
-        getCommand("kaboom").setExecutor(new kaboom());
-        getCommand("fly").setExecutor(new fly());
-        getCommand("sudo").setExecutor(new sudo());
-        getCommand("core").setExecutor(new core(this));
-        getCommand("ping").setExecutor(new ping());
-        getCommand("test").setExecutor(this);
+        World world = Bukkit.getServer().getWorld("Hub");
+        if (world != null) {
+            world.setDifficulty(Difficulty.PEACEFUL);
+        }
+    }
+    public void registerEvent() {
         // Register Events
         getServer().getPluginManager().registerEvents(new slotitem(), this);
         getServer().getPluginManager().registerEvents(new onjoin(this), this);
@@ -145,6 +136,30 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         getServer().getPluginManager().registerEvents(new Chat(), this);
         //IDK
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+    }
+    public void registerCommand() {
+        // Register Commands
+        Objects.requireNonNull(getCommand("feed")).setExecutor(new feed());
+        Objects.requireNonNull(getCommand("heal")).setExecutor(new health());
+        Objects.requireNonNull(getCommand("gmc")).setExecutor(new gmc());
+        Objects.requireNonNull(getCommand("gma")).setExecutor(new gma());
+        Objects.requireNonNull(getCommand("gms")).setExecutor(new gms());
+        Objects.requireNonNull(getCommand("gmsp")).setExecutor(new gmsp());
+        Objects.requireNonNull(getCommand("spawn")).setExecutor(new spawn(this));
+        Objects.requireNonNull(getCommand("setspawn")).setExecutor(new setspawn(this));
+        Objects.requireNonNull(getCommand("enderchest")).setExecutor(new enderchest());
+        Objects.requireNonNull(getCommand("earape")).setExecutor(new earape());
+        Objects.requireNonNull(getCommand("crash")).setExecutor(new crash());
+        Objects.requireNonNull(getCommand("b")).setExecutor(new build());
+        Objects.requireNonNull(getCommand("fling")).setExecutor(new fling());
+        Objects.requireNonNull(getCommand("kaboom")).setExecutor(new kaboom());
+        Objects.requireNonNull(getCommand("fly")).setExecutor(new fly());
+        Objects.requireNonNull(getCommand("sudo")).setExecutor(new sudo());
+        Objects.requireNonNull(getCommand("core")).setExecutor(new core(this));
+        Objects.requireNonNull(getCommand("ping")).setExecutor(new ping());
+        Objects.requireNonNull(getCommand("test")).setExecutor(this);
+    }
+    public void registerPAPI() {
         //PlaceholderAPI Register
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new PlaceholderExpansion().register();
@@ -168,10 +183,8 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
                 getLogger().severe(Arrays.toString(e.getStackTrace()));
             }
         }
-        World world = Bukkit.getServer().getWorld("Hub");
-        if (world != null) {
-            world.setDifficulty(Difficulty.PEACEFUL);
-        }
+    }
+    public void loadDataBase() {
         Database database = new Database(this);
         msgconsole(PLname + "database is loading....\n\n");
         msgconsole(ChatColor.GREEN + "███╗░░░███╗██╗░░░██╗░██████╗░██████╗░██╗░░░░░");

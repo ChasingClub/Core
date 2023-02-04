@@ -1,12 +1,9 @@
 package core.itdragclick.Utils;
 
 import core.itdragclick.Core;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.sql.*;
-import java.util.UUID;
 
 public class Database {
     public Core plugin;

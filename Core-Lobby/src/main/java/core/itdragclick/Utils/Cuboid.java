@@ -83,7 +83,7 @@ public class Cuboid {
         if (this == obj) {
             return true;
         }
-        if (obj == null || !(obj instanceof Cuboid)) {
+        if (!(obj instanceof Cuboid)) {
             return false;
         }
         final Cuboid other = (Cuboid) obj;
