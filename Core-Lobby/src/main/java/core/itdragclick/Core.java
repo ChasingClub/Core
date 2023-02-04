@@ -104,7 +104,7 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
             }
             p.sendMessage(PLname + "Core plugin have been reloaded!");
         }
-        // Set Normal TimeZone
+        // Set TimeZone
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Bangkok"));
         // Add HashMap
         anti.put("8a490d62-98bd-4f57-b4a6-e4738b0beb96", "1");
