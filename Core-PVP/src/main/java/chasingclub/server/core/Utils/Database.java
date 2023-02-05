@@ -54,9 +54,9 @@ public class Database {
     }
     public static Connection connection3;
     public Connection getConnection3() throws SQLException {
-        String url = "jdbc:mysql://"+plugin.SQL_ip2+"/"+"s5_inventory_slot";
-        String user = "u5_m1uhMUjYLc";
-        String password = "42Iri1!XYv+.LHFAccUhFnu0";
+        String url = "jdbc:mysql://"+plugin.SQL_ip2+"/"+"s2_inventory_slot";
+        String user = "u2_C3wNv28Udy";
+        String password = "NKcQqhB.kUdYBRSJS8hSy6w+";
         Connection connection3 = DriverManager.getConnection(url, user, password);
         Database.connection3 = connection3;
 

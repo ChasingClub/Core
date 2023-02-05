@@ -22,13 +22,13 @@ public class Core extends Plugin {
     ////////////////////////////////////////
     public static String ip = "panel.chasingclub.net:3306";
     ////////////////////////////////////////
-    public static String database2 = "s2_Core2";
-    public static String username2 = "u2_P2XfIFQhJm";
-    public static String password2 = "8K.AYhQ=P^oCy3Jsjb^vhKYM";
+    public static String database2 = "s2_Core1";
+    public static String username2 = "u2_JFwIGUAzID";
+    public static String password2 = "BDU+42R!@VtqI+h3DrPiUIXt";
     ////////////////////////////////////////
-    public static String database3 = "s2_Core1";
-    public static String username3 = "u2_JFwIGUAzID";
-    public static String password3 = "BDU+42R!@VtqI+h3DrPiUIXt";
+    public static String database3 = "s2_Core2";
+    public static String username3 = "u2_P2XfIFQhJm";
+    public static String password3 = "8K.AYhQ=P^oCy3Jsjb^vhKYM";
     ////////////////////////////////////////
     public static String domain = "chasingclub.net";
     public static HashMap<String, String> reasons = new HashMap<>();
@@ -47,8 +47,8 @@ public class Core extends Plugin {
     public static HashMap<String, Integer> reportcooldowns;
     public static HashMap<String, Integer> bugreportcooldowns;
     public static HashMap<String, Integer> msgcooldowns;
-    public static String webhookURL = "https://discord.com/api/webhooks/1001889150129152150/L6a_4y0kUKtP_OJ-JO2wnP--1ZBduqdhge4EcgAkZgmF-8bevBC7hUBxF9JVvLQDalYy";
-    public static String webhookReport = "https://discord.com/api/webhooks/1004785775709257858/6OR4mymG8QkxsyhPAkklN7gwORTI5fr3l5BNKopXCvrfb-UcUPuVPX92OLOVLv915ToL";
+    public static String webhookURL = "https://discord.com/api/webhooks/1071599523002069003/kC45Zo8GbO_jVqOpYBn4zD4iq8hpwCVXEzcQfWXAEgbwcau16OUB1X_bOmLbkvI2io2g";
+    public static String webhookReport = "https://discord.com/api/webhooks/1071599523002069003/kC45Zo8GbO_jVqOpYBn4zD4iq8hpwCVXEzcQfWXAEgbwcau16OUB1X_bOmLbkvI2io2g";
     public static void reload(){
         onPing.onIcon();
     }
