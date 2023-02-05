@@ -24,12 +24,12 @@ spawn:
   pitch: 0
 
 database:
-  IP: localhost
-  username: 'username'
-  password: 'password'
-  database: 'database'
+  IP: panel.chasingclub.net
+  username: 'u2_JFwIGUAzID'
+  password: 'BDU+42R!@VtqI+h3DrPiUIXt'
+  database: 's2_Core1'
 database2:
-  IP: localhost
-  username: 'username'
-  password: 'password'
-  database: 'database'
+  IP: panel.chasingclub.net
+  username: 'u2_P2XfIFQhJm'
+  password: '8K.AYhQ=P^oCy3Jsjb^vhKYM'
+  database: 's2_Core2'

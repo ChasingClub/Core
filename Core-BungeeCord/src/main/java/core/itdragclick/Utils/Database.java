@@ -26,9 +26,9 @@ public class Database {
         return connection;
     }
     public Connection getConnection3() throws SQLException {
-        String url = "jdbc:mysql://mysql-pinont-do-user-13206302-0.b.db.ondigitalocean.com:25060/s1_bugreport?useSSL=true";
-        String user = "u1_J69XfQYtn7";
-        String password = "y8zmI30PoAQ8M.c@+UjFBx!P";
+        String url = "jdbc:mysql://panel.chasingclub.net:3306/s2_bugreport?useSSL=true";
+        String user = "u2_UAmgCY010D";
+        String password = "BaY!!5LC^1jC@6X^!xJn0Jrr";
         Connection connection = DriverManager.getConnection(url, user, password);
         Database.connection4 = connection;
 

@@ -82,39 +82,6 @@ public class onJoin implements Listener {
                 return;
             }
         }
-        if(!(p.hasPermission("verify.bypass"))){
-            boolean online;
-            Socket s = new Socket();
-            try {
-                s.connect(new InetSocketAddress("proxy.the-asmc.com", 25566), 10); //good timeout is 10-20
-                s.close();
-                online = true;
-            } catch (IOException ex) {
-                online = false;
-            }
-            if(!online){
-                p.disconnect(ChatColor.RED+"The verification Server is null, please try again soon.");
-                for(ProxiedPlayer all : ProxyServer.getInstance().getPlayers()){
-                    if(all.hasPermission("rank.mod")){
-                        all.sendMessage(PLname+p.getName()+" try to join the proxy but server \"checkpack\" is not online.");
-                    }
-                }
-            }else{
-                e.setTarget(ProxyServer.getInstance().getServerInfo("checkpack"));
-                for(ProxiedPlayer all : ProxyServer.getInstance().getPlayers()){
-                    if(all.hasPermission("rank.mod")){
-                        all.sendMessage(PLname+p.getName()+" just join the proxy | Server: \"checkpack\"");
-                    }
-                }
-            }
-        }else{
-            e.setTarget(ProxyServer.getInstance().getServerInfo("lobby"));
-            for(ProxiedPlayer all : ProxyServer.getInstance().getPlayers()){
-                if(all.hasPermission("rank.mod")){
-                    all.sendMessage(PLname+p.getName()+" just join the proxy | Server: \"lobby\"");
-                }
-            }
-        }
     }
     @EventHandler
     public void onLogin(PostLoginEvent e){

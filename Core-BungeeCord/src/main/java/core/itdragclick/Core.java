@@ -20,15 +20,15 @@ import java.util.concurrent.TimeUnit;
 public class Core extends Plugin {
     // DATABASE
     ////////////////////////////////////////
-    public static String ip = "mysql-pinont-do-user-13206302-0.b.db.ondigitalocean.com:25060";
+    public static String ip = "panel.chasingclub.net:3306";
     ////////////////////////////////////////
-    public static String database2 = "s1_player_data";
-    public static String username2 = "u1_pVCFwUUkYz";
-    public static String password2 = "JDZlR3n!^MYao@jLCRKXkH^N";
+    public static String database2 = "s2_Core2";
+    public static String username2 = "u2_P2XfIFQhJm";
+    public static String password2 = "8K.AYhQ=P^oCy3Jsjb^vhKYM";
     ////////////////////////////////////////
-    public static String database3 = "s1_vanish";
-    public static String username3 = "u1_iTyBvnbOJ4";
-    public static String password3 = "3W!^n.rSUU.TT92OHEdgfwrI";
+    public static String database3 = "s2_Core1";
+    public static String username3 = "u2_JFwIGUAzID";
+    public static String password3 = "BDU+42R!@VtqI+h3DrPiUIXt";
     ////////////////////////////////////////
     public static String domain = "chasingclub.net";
     public static HashMap<String, String> reasons = new HashMap<>();
