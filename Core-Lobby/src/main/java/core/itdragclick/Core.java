@@ -58,6 +58,7 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
     public static String Webhook = "true";
     public static String webhookURL = "https://discord.com/api/webhooks/1071599523002069003/kC45Zo8GbO_jVqOpYBn4zD4iq8hpwCVXEzcQfWXAEgbwcau16OUB1X_bOmLbkvI2io2g";
     public void reload() {
+        // reload
         cfile = new File(getDataFolder(), "config.yml");
         config = YamlConfiguration.loadConfiguration(cfile);
         worldspawn = config.getString("spawn.world");
