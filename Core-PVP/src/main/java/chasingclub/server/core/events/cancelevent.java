@@ -2,9 +2,7 @@ package chasingclub.server.core.events;
 
 import chasingclub.server.core.Core;
 import chasingclub.server.core.Utils.Utils;
-
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,13 +17,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
-import org.bukkit.inventory.PlayerInventory;
-import vanish.itdragclick.api.vanish.VanishAPI;
 
 import static chasingclub.server.core.Utils.HotbarGui.*;
-import static chasingclub.server.core.Utils.HotbarGui.A;
 import static chasingclub.server.core.Utils.Utils.PluginName;
 
 public class cancelevent implements Listener {
@@ -109,10 +103,6 @@ public class cancelevent implements Listener {
         Player p = (Player) e.getEntity();
         Player t = (Player) e.getDamager();
         if(p.getGameMode() == GameMode.CREATIVE || p.getGameMode() == GameMode.SPECTATOR){return;}
-        if(VanishAPI.isInvisible(t)){
-            t.sendMessage(PluginName+"You are vanished, you can't damage others.");
-            e.setCancelled(true);
-        }
     }
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent e){

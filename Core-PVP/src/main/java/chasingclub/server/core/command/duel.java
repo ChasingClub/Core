@@ -1,10 +1,5 @@
 package chasingclub.server.core.command;
 
-import static chasingclub.server.core.Core.combatList;
-import static chasingclub.server.core.Utils.Database.*;
-import static chasingclub.server.core.Utils.Utils.*;
-import static org.bukkit.Bukkit.getServer;
-
 import chasingclub.server.core.Core;
 import chasingclub.server.core.Utils.DuelStatsSQLAPI;
 import chasingclub.server.core.Utils.SlotSQL;
@@ -14,23 +9,26 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
-import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import vanish.itdragclick.api.vanish.VanishAPI;
-
 import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static chasingclub.server.core.Core.combatList;
+import static chasingclub.server.core.Utils.Database.*;
+import static chasingclub.server.core.Utils.Utils.*;
+import static org.bukkit.Bukkit.getServer;
 
 public class duel implements CommandExecutor, TabCompleter {
     public Core plugin;
@@ -237,12 +235,6 @@ public class duel implements CommandExecutor, TabCompleter {
                         return true;
                     }
                     if (target == null) {
-
-                        player.sendMessage(PluginName + ChatColor.RED + "That player is offline!");
-                        return true;
-
-                    }
-                    if (VanishAPI.isInvisible(target)) {
 
                         player.sendMessage(PluginName + ChatColor.RED + "That player is offline!");
                         return true;
@@ -1662,11 +1654,6 @@ public class duel implements CommandExecutor, TabCompleter {
                             player.sendMessage(PluginName + ChatColor.RED + "That player is offline!");
                             return true;
 
-                        }if (VanishAPI.isInvisible(target)) {
-
-                            player.sendMessage(PluginName + ChatColor.RED + "That player is offline!");
-                            return true;
-
                         }if (target.getName().equals(player.getName())) {
 
                             player.sendMessage(PluginName + ChatColor.RED + "You can't duel yourself!");
@@ -1751,11 +1738,6 @@ public class duel implements CommandExecutor, TabCompleter {
             ArrayList<String> playerNames = new ArrayList<>();
             Player[] players = new Player[Bukkit.getServer().getOnlinePlayers().size()];
             Bukkit.getServer().getOnlinePlayers().toArray(players);
-            for (Player player : players) {
-                if (!VanishAPI.isInvisible(player)) {
-                    playerNames.add(player.getName());
-                }
-            }
 
             return playerNames;
         } else if (args.length == 3) {

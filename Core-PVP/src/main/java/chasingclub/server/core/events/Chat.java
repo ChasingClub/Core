@@ -11,7 +11,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import vanish.itdragclick.api.vanish.VanishAPI;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -38,7 +37,7 @@ public class Chat implements Listener {
         }
         String[] split = msg.split(" ");
         for (final Player ap : Bukkit.getOnlinePlayers()) {
-            if (ap != e.getPlayer() && !VanishAPI.isInvisible(ap)) {
+            if (ap != e.getPlayer()) {
                 if(Arrays.asList(split).contains(ap.getName())) {
                     ap.playSound(ap.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10000, 2);
                     msg = msg.replaceAll(ap.getName(), ChatColor.YELLOW + ap.getName() + ChatColor.RESET);

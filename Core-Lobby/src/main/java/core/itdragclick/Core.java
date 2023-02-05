@@ -56,7 +56,7 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
     public static ArrayList<String> build = new ArrayList<>();
     public static Core plugin;
     public static String Webhook = "true";
-    public static String webhookURL = "https://discord.com/api/webhooks/1001889150129152150/L6a_4y0kUKtP_OJ-JO2wnP--1ZBduqdhge4EcgAkZgmF-8bevBC7hUBxF9JVvLQDalYy";
+    public static String webhookURL = "https://discord.com/api/webhooks/1071599523002069003/kC45Zo8GbO_jVqOpYBn4zD4iq8hpwCVXEzcQfWXAEgbwcau16OUB1X_bOmLbkvI2io2g";
     public void reload() {
         cfile = new File(getDataFolder(), "config.yml");
         config = YamlConfiguration.loadConfiguration(cfile);

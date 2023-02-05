@@ -1,6 +1,5 @@
 package chasingclub.server.core.command;
 
-import chasingclub.server.core.Core;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

@@ -3,14 +3,14 @@ package chasingclub.server.core.events;
 import chasingclub.server.core.Core;
 import chasingclub.server.core.Utils.DuelStatsSQLAPI;
 import chasingclub.server.core.Utils.KitSQLAPI;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.potion.PotionEffect;
-import vanish.itdragclick.api.vanish.VanishAPI;
 
 import java.sql.SQLException;
 
@@ -89,17 +89,6 @@ public class joinEvent implements Listener {
             for (PotionEffect effect : p.getActivePotionEffects())
                 p.removePotionEffect(effect.getType());
             p.setWalkSpeed(0.2F); // default walk speed is 2F
-        }
-        if(connection != null){
-            try {
-                if(VanishAPI.isInvisible(p)){
-                    AddVanish(p);
-                }else{
-                    DeleteVanish(p);
-                }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
         }
     }
 }

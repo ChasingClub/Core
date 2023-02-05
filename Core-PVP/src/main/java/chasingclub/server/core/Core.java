@@ -2,8 +2,9 @@ package chasingclub.server.core;
 
 import chasingclub.server.core.Utils.*;
 import chasingclub.server.core.command.*;
-import chasingclub.server.core.events.*;
 import chasingclub.server.core.command.core.core;
+import chasingclub.server.core.commandTabComplete.kitsTabable;
+import chasingclub.server.core.events.*;
 import chasingclub.server.core.hook.PlaceholderExpansion;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -18,7 +19,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerPickupArrowEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -29,20 +33,16 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
-import chasingclub.server.core.commandTabComplete.kitsTabable;
-import vanish.itdragclick.api.vanish.VanishAPI;
-
 
 import java.awt.Color;
 import java.io.File;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 import static chasingclub.server.core.API.Prefix.SetTeamPrefix;
 import static chasingclub.server.core.Utils.Database.*;
-import static chasingclub.server.core.Utils.Database.UpdateKit;
 import static chasingclub.server.core.Utils.Utils.*;
 import static chasingclub.server.core.command.givekit.givekite;
 
@@ -90,6 +90,7 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
     public static HashMap<String, Integer> combatList;
     public static HashMap<String, Integer> bhopcooldown = new HashMap<String, Integer>();
     public static HashMap<String, String> ingame = new HashMap<String, String>();
+
     public void reload() {
         cfile = new File(getDataFolder(), "config.yml");
         config = YamlConfiguration.loadConfiguration(cfile);
@@ -199,7 +200,6 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         }
 
         // register Event
-        getServer().getPluginManager().registerEvents(new Vanish(), this);
         getServer().getPluginManager().registerEvents(new classic_sword(this), this);
         getServer().getPluginManager().registerEvents(new dia_to_netherite(this), this);
         getServer().getPluginManager().registerEvents(new slotitem(), this);
@@ -270,7 +270,7 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
                 Core.kits.put(p, KitName);
                 p.sendMessage(PluginName+"You are currently select "+ChatColor.GREEN+KitName);
             }
-            if (p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR && !VanishAPI.isInvisible(p)){
+            if (p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR){
                 p.teleport(spawnloc);
                 p.getInventory().clear();
                 GetKitSelect(p);
@@ -374,7 +374,7 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
                p.getWorld().getName().equals("world") &&
                !(spawn.contains(p.getLocation()))
             ){
-                if(!gotkit.get(p.getName()) && !VanishAPI.isInvisible(p)) {
+                if(!gotkit.get(p.getName())) {
                     p.getInventory().clear();
                     p.setFoodLevel(20);
                     p.setSaturation(20f);
@@ -388,7 +388,6 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
             if(
                p.getGameMode() == GameMode.CREATIVE ||
                p.getGameMode() == GameMode.SPECTATOR ||
-               VanishAPI.isInvisible(p) ||
                !p.getWorld().getName().equals("world") ||
                (spawn.contains(p.getLocation()))
             ){

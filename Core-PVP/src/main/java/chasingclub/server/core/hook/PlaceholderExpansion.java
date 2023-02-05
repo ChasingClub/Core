@@ -21,18 +21,18 @@ import static chasingclub.server.core.Utils.Database.FindDuelStatsByPlayerUUID;
 public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.PlaceholderExpansion {
 
     @Override
-    public @NotNull String getIdentifier(){
-        return "ChasingClub";
-    }
-
-    @Override
     public @NotNull String getAuthor(){
         return "ItDragClick";
     }
 
     @Override
+    public @NotNull String getIdentifier(){
+        return "ChasingClub";
+    }
+
+    @Override
     public @NotNull String getVersion(){
-        return "1.5.6";
+        return "1.0.0";
     }
 
     @Override
@@ -64,19 +64,19 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
         if(p == null){
             return "";
         }
-        if(params.equals("kit")){
+        if(params.equalsIgnoreCase("kit")){
             return Core.kits.get(p);
         }
-        if(params.equals("target")){
+        if(params.equalsIgnoreCase("target")){
             return ingame.getOrDefault(p.getName(), "Unknown");
         }
-        if(params.equals("duel_wins")){
+        if(params.equalsIgnoreCase("duel_wins")){
             return String.valueOf(GetPlayerDuelStats(p.getUniqueId().toString()).GetWins());
         }
-        if(params.equals("duel_loses")){
+        if(params.equalsIgnoreCase("duel_loses")){
             return String.valueOf(GetPlayerDuelStats(p.getUniqueId().toString()).GetLoses());
         }
-        if(params.equals("duel_winrate")){
+        if(params.equalsIgnoreCase("duel_winrate")){
             DuelStatsSQLAPI data = GetPlayerDuelStats(p.getUniqueId().toString());
             double wins = data.GetWins();
             double loses = data.GetLoses();
@@ -85,12 +85,12 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
             decimalFormat.setRoundingMode(RoundingMode.CEILING);
             return decimalFormat.format(winrate);
         }
-        if(params.equals("hp")){
+        if(params.equalsIgnoreCase("hp")){
             if(!ingame.containsKey(p.getName())){
                 return "N/A";
             }
             String msg = "N/A";
-            if(p.getWorld().getName().equals("Netherite_game")) {
+            if(p.getWorld().getName().equalsIgnoreCase("Netherite_game")) {
                 PlayerInventory inv = p.getInventory();
                 if (Objects.requireNonNull(inv.getHelmet()).getType() == Material.DIAMOND_HELMET) {
                     msg = ("§a●●●●●●●");
@@ -127,7 +127,7 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
 
             return msg;
         }
-        if(params.equals("target_hp")){
+        if(params.equalsIgnoreCase("target_hp")){
             if(!ingame.containsKey(p.getName())){
                 return "N/A";
             }
@@ -159,7 +159,7 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
                 if (inv.contains(Material.NETHERITE_AXE)) {
                     msg = ("§a●§c●●●●●●");
                 }
-            }else if(target.getWorld().getName().equals("classic_sword")){
+            }else if(target.getWorld().getName().equalsIgnoreCase("classic_sword")){
                 if(classic_sword.Lives.get(target.getName()) == 3){
                     msg = ("§a●●●");
                 }

@@ -8,8 +8,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import vanish.itdragclick.api.vanish.VanishAPI;
-
 import static chasingclub.server.core.Utils.Utils.PluginName;
 import static chasingclub.server.core.Utils.Utils.error;
 
@@ -32,7 +30,7 @@ public class ping implements CommandExecutor {
                     sender.sendMessage(PluginName + ChatColor.RED + "That player is offline!");
                     return true;
                 }
-                if (VanishAPI.isInvisible(target) && !target.getName().equals(sender.getName()) && !sender.hasPermission("rank.staff")) {
+                if (!target.getName().equals(sender.getName()) && !sender.hasPermission("rank.staff")) {
                     sender.sendMessage(PluginName + ChatColor.RED + "That player is offline!");
                     return true;
                 }

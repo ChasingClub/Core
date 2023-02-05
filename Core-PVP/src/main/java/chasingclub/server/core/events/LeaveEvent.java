@@ -10,13 +10,13 @@ import org.bukkit.potion.PotionEffect;
 
 import java.sql.SQLException;
 
+import static chasingclub.server.core.Core.*;
 import static chasingclub.server.core.Utils.Database.UpdateDuel;
 import static chasingclub.server.core.Utils.Database.UpdateKit;
 import static chasingclub.server.core.Utils.Utils.PluginName;
 import static chasingclub.server.core.Utils.Utils.error;
 import static chasingclub.server.core.events.classic_sword.Lives;
 import static org.bukkit.Bukkit.getServer;
-import static chasingclub.server.core.Core.*;
 
 public class LeaveEvent implements Listener {
     public Core plugin;
