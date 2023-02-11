@@ -1,0 +1,11 @@
+name: SMPCore
+version: '${project.version}'
+main: cc.Core
+api-version: 1.19
+authors: [ Pinont ]
+description: ChasingClub SMP Core
+
+commands:
+  rtp:
+    description: random Teleport
+    usage: /rtp
