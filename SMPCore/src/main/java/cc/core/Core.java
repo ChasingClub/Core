@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public final class Core extends JavaPlugin {
     private final SQLite Sqlite = new SQLite(this);
-    //private Connection connection;
+    private Connection connection;
     public static Core plugin;
     public Core() {
         plugin = this;
