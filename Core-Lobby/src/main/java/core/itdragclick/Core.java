@@ -84,7 +84,6 @@ public class Core extends JavaPlugin implements Listener, CommandExecutor {
         loadDataBase();
 
         File file = new File(getDataFolder() + File.separator + "config.yml"); //This will get the config file
-
         if (!file.exists()) { //This will check if the file exist
             getConfig().options().copyDefaults(true); //function to check the important settings
             saveConfig(); //saves the config
