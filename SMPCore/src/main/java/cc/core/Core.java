@@ -28,7 +28,7 @@ public final class Core extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("team")).setExecutor(new TeamCommand());
     }
     private void loadConfig() {
-//        getConfig().options().copyDefaults();
+        getConfig().options().copyDefaults();
         saveDefaultConfig();
         int a = getConfig().getInt("border");
         Bukkit.getLogger().info(String.valueOf(a));
