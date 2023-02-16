@@ -50,12 +50,12 @@ public class core implements CommandExecutor, TabCompleter {
     @Override
     public java.util.List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
         if (args.length == 1) {
-            List<String> argruments = new ArrayList<>();
-            argruments.add("reload");
-            argruments.add("reloadconfig");
-            argruments.add("help");
+            List<String> arguments = new ArrayList<>();
+            arguments.add("reload");
+            arguments.add("reloadconfig");
+            arguments.add("help");
 
-            return argruments;
+            return arguments;
         }
         return null;
     }

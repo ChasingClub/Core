@@ -1,6 +1,5 @@
 package cc.core.command;
 
-import cc.core.Core;
 import cc.core.SMPTeam;
 import cc.core.SQliteManager.SQLite;
 import org.bukkit.Bukkit;
