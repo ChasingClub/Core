@@ -9,3 +9,7 @@ commands:
   rtp:
     description: random Teleport
     usage: /rtp
+
+  spawn:
+    description: Spawn
+    usage: /spawn

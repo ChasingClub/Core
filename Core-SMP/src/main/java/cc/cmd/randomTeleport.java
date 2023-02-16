@@ -38,7 +38,6 @@ public class randomTeleport implements CommandExecutor {
                     //Teleport player
                     target.teleport(randomLocation);
 
-                    target.sendMessage(ChatColor.GREEN + player.getName() + ChatColor.GOLD + " just Random Teleported you!");
                     target.sendMessage(ChatColor.AQUA + "New Coordinates: " + ChatColor.LIGHT_PURPLE + randomLocation.getX() + " " + randomLocation.getY() + " " + randomLocation.getZ());
 
                     player.sendMessage(ChatColor.RED + "Player successfully teleported to: " + ChatColor.LIGHT_PURPLE + randomLocation.getX() + " " + randomLocation.getY() + " " + randomLocation.getZ());

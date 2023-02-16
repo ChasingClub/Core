@@ -20,6 +20,8 @@ public class randomTeleportUtils {
         bad_blocks.add(Material.LAVA);
         bad_blocks.add(Material.FIRE);
         bad_blocks.add(Material.CACTUS);
+        bad_blocks.add(Material.WATER);
+        bad_blocks.add(Material.KELP);
     }
 
     public static Location generateLocation(Player player){
@@ -42,7 +44,7 @@ public class randomTeleportUtils {
 
         Location randomLocation = new Location(player.getWorld(), x, y, z);
         y = randomLocation.getWorld().getHighestBlockYAt(randomLocation);
-        randomLocation.setY(y);
+        randomLocation.setY(y+2);
 
         return randomLocation;
     }
