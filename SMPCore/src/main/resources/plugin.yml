@@ -1,0 +1,19 @@
+name: SMPCore
+version: '${project.version}'
+main: cc.core.Core
+api-version: 1.19
+authors: [ Pinont ]
+description: ChasingClub SMP Core
+
+commands:
+  rtp:
+    description: random Teleport
+    usage: /rtp
+
+  spawn:
+    description: Spawn
+    usage: /spawn
+
+  team:
+    description: Team
+    usage: /team

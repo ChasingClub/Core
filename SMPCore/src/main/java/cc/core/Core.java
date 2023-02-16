@@ -3,6 +3,7 @@ package cc.core;
 import cc.core.SQliteManager.SQLite;
 import cc.core.command.TeamCommand;
 import cc.core.command.randomTeleport;
+import cc.core.command.spawn;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,12 +21,13 @@ public final class Core extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         Sqlite.loadSQLite();
-        registerCommand();
+        registerCommands();
         loadConfig();
     }
-    private void registerCommand() {
-        Objects.requireNonNull(this.getCommand("rtp")).setExecutor(new randomTeleport());
-        Objects.requireNonNull(this.getCommand("team")).setExecutor(new TeamCommand());
+    private void registerCommands() {
+        Objects.requireNonNull(getCommand("team")).setExecutor(new TeamCommand());
+        Objects.requireNonNull(getCommand("rtp")).setExecutor(new randomTeleport());
+        Objects.requireNonNull(getCommand("spawn")).setExecutor(new spawn());
     }
     private void loadConfig() {
         getConfig().options().copyDefaults();

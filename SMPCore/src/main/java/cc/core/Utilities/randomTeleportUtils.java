@@ -20,6 +20,16 @@ public class randomTeleportUtils {
         bad_blocks.add(Material.LAVA);
         bad_blocks.add(Material.FIRE);
         bad_blocks.add(Material.CACTUS);
+        bad_blocks.add(Material.WATER);
+        bad_blocks.add(Material.COBWEB);
+        bad_blocks.add(Material.SWEET_BERRY_BUSH);
+        bad_blocks.add(Material.NETHER_PORTAL);
+        bad_blocks.add(Material.END_PORTAL);
+        bad_blocks.add(Material.END_PORTAL_FRAME);
+        bad_blocks.add(Material.MAGMA_BLOCK);
+        bad_blocks.add(Material.NETHER_WART);
+        bad_blocks.add(Material.KELP);
+        bad_blocks.add(Material.KELP_PLANT);
     }
 
     public static Location generateLocation(Player player){
@@ -42,7 +52,7 @@ public class randomTeleportUtils {
 
         Location randomLocation = new Location(player.getWorld(), x, y, z);
         y = Objects.requireNonNull(randomLocation.getWorld()).getHighestBlockYAt(randomLocation);
-        randomLocation.setY(y);
+        randomLocation.setY(y+1);
 
         return randomLocation;
     }
@@ -65,8 +75,8 @@ public class randomTeleportUtils {
         int z = location.getBlockZ();
         //Get instances of the blocks around where the player would spawn
         Block block = Objects.requireNonNull(location.getWorld()).getBlockAt(x, y, z);
-        Block below = location.getWorld().getBlockAt(x, y - 1, z);
-        Block above = location.getWorld().getBlockAt(x, y + 1, z);
+        Block below = location.getWorld().getBlockAt(x, y - 2, z);
+        Block above = location.getWorld().getBlockAt(x, y + 2, z);
 
         //Check to see if the surroundings are safe or not
         return !(bad_blocks.contains(below.getType())) || (block.getType().isSolid()) || (above.getType().isSolid());
