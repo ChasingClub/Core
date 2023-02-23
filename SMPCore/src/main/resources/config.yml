@@ -1,2 +1,5 @@
-world-border: true
-border: 300
+# Random Teleport limit
+rtp-radius-limit: true # if false default radius will be world border radius, may cause server impact if world border is default size
+rtp-radius: 300
+# Command cooldown in seconds
+command-cooldown: 15

@@ -17,3 +17,11 @@ commands:
   team:
     description: Team
     usage: /team
+
+  bed:
+    description: Bed
+    usage: /bed
+
+  passive:
+    description: PvP
+    usage: /passive

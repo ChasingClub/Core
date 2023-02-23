@@ -1,7 +1,7 @@
 package cc.core.command;
 
-import cc.core.SMPTeam;
 import cc.core.SQliteManager.SQLite;
+import cc.core.SMPTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -10,20 +10,25 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.UUID;
 
 import static cc.core.Core.plugin;
 
 public class TeamCommand implements CommandExecutor {
-    private final SQLite Sqlite = new SQLite(plugin);
-    SMPTeam smpTeam = new SMPTeam();
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String[] args) {
+        SQLite Sqlite = new SQLite(plugin);
+        SMPTeam smpTeam = new SMPTeam();
         // Check if commandSender is not console
         if (!(commandSender instanceof Player)) {
             commandSender.sendMessage("This command can only be used by players.");
+            Bukkit.getLogger().info("smpTeam Mapping:");
+            Bukkit.getLogger().info(smpTeam.getPlayerTeams().toString());
+            Bukkit.getLogger().info("Sqlite Mapping:");
+            Bukkit.getLogger().info(Sqlite.getPlayerTeams().toString());
             return false;
         }
         // Check if player input the command argument or not

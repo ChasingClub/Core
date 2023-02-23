@@ -58,13 +58,13 @@ public class SQLite {
         }
     }
     public void unloadSQLite() {
-    try (Connection connection = getSQLConnection()) {
-        connection.close();
-        Bukkit.getLogger().info("Successfully closed Team Database");
-    } catch (SQLException e) {
-        Bukkit.getLogger().severe("Failed to close Team Database: " + e.getMessage());
+        try (Connection connection = getSQLConnection()) {
+            connection.close();
+            Bukkit.getLogger().info("Successfully closed Team Database");
+        } catch (SQLException e) {
+            Bukkit.getLogger().severe("Failed to close Team Database: " + e.getMessage());
+        }
     }
-}
     public void addMember(UUID uuid, String team) throws SQLException {
         try (Connection connection = getSQLConnection();
              PreparedStatement statement = connection.prepareStatement(insertSQL)) {

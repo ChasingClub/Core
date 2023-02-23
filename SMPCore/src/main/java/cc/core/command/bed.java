@@ -12,12 +12,12 @@ import java.util.UUID;
 
 import static cc.core.Core.plugin;
 
-public class spawn implements CommandExecutor {
+public class bed implements CommandExecutor {
 
     private final HashMap<UUID, Long> cooldown;
     private int cmdCooldown = plugin.getConfig().getInt("command-cooldown");
 
-    public spawn() {
+    public bed() {
         this.cooldown = new HashMap<>();
     }
 
@@ -26,26 +26,28 @@ public class spawn implements CommandExecutor {
 
         // Check if sender is a player
         if (sender instanceof Player){
-            Player player;
-            player = (Player) sender;
+            Player player = (Player) sender;
 
             // Check if player is in cooldown
             if (!this.cooldown.containsKey(player.getUniqueId())) {
                 // if not then run command and set player cooldown
                 this.cooldown.put(player.getUniqueId(), System.currentTimeMillis());
 
-                // Get the world spawn location
-                Location worldSpawn = player.getWorld().getSpawnLocation();
+                // check if player has a bed spawn location
+                if (player.getPlayer().getBedSpawnLocation() != null) {
+                    Location bedSpawn = player.getPlayer().getBedSpawnLocation();
+                    player.teleport(bedSpawn);
+                } else {
+                    // if not
+                    player.sendMessage(ChatColor.RED + "You don't have a bed spawn location!");
+                }
 
-                // Teleport player to world spawn
-                player.teleport(worldSpawn);
             } else { // if player is in cooldown
                 long time = System.currentTimeMillis() - this.cooldown.get(player.getUniqueId());
                 if (time < this.cmdCooldown * 1000L) {
                     player.sendMessage(ChatColor.RED + "You can't use this command for " + (this.cmdCooldown * 1000L - time) + "seconds");
                 }
             }
-
         } else {
             sender.sendMessage(ChatColor.RED + "This Command is only for a player");
         }
