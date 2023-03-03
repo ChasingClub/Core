@@ -13,7 +13,13 @@ public class playerDealDamage implements Listener {
             YamlStorage victim = new YamlStorage((Player) event.getEntity());
             YamlStorage attacker = new YamlStorage((Player) event.getDamager());
             if (!victim.pvpEnabled() || !attacker.pvpEnabled()) {
-                event.setCancelled(true);
+                if(!victim.pvpEnabled()) {
+                    event.getDamager().sendMessage("§cPVP is disabled for this player.");
+                    event.setCancelled(true);
+                } else if (!attacker.pvpEnabled()) {
+                    event.getDamager().sendMessage("§cPVP is disabled for you.");
+                    event.setCancelled(true);
+                }
             }
         }
     }

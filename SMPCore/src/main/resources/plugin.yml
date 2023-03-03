@@ -22,6 +22,6 @@ commands:
     description: Bed
     usage: /bed
 
-  passive:
+  pvp:
     description: PvP
-    usage: /passive
+    usage: /pvp

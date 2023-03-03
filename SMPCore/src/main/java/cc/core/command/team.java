@@ -1,9 +1,11 @@
 package cc.core.command;
 
-import cc.core.SQliteManager.SQLite;
 import cc.core.SMPTeam;
+import cc.core.SQliteManager.SQLite;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,12 +13,12 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 import static cc.core.Core.plugin;
 
-public class TeamCommand implements CommandExecutor {
+public class team implements CommandExecutor {
+    public static HashMap<Player, Player> tpa = new HashMap();
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String[] args) {
@@ -45,7 +47,6 @@ public class TeamCommand implements CommandExecutor {
         UUID uuid = player.getUniqueId();
 
         switch (args[0].toLowerCase()) {
-            // processing
             case "create":
                 // Check if commandSender input the teamName in args[2] or not if not the code stop here.
                 if (args.length < 2) {
@@ -71,8 +72,6 @@ public class TeamCommand implements CommandExecutor {
                 }
                 player.sendMessage(ChatColor.GREEN + "You have created and joined the team '" + teamName + "'.");
                 break;
-            // processing
-            // known bugs: when you join the database is update but the playerTeams Mapping in SMPTeam class is not updated
             case "join":
                 // Check if commandSender input the teamName they want to join or not if not the code stop here.
                 if (args.length < 2) {
@@ -98,8 +97,6 @@ public class TeamCommand implements CommandExecutor {
                 }
                 player.sendMessage(ChatColor.GREEN + "You have joined the team '" + teamName + "'.");
                 break;
-            // processing
-            // not tested yet, but I think it might not work because playerTeams mapping in SMPTeam class not update
             case "add":
                 // Check if player input enough argument for this command
                 if (args.length < 2) {
@@ -118,8 +115,6 @@ public class TeamCommand implements CommandExecutor {
                     e.printStackTrace();
                 }
                 break;
-            // processing
-            // known bugs: the player's data wiped out from db but playerTeams Mapping in SMPTeam class is not updated
             case "leave":
                 // Check if player is in team or not if not the code will stop here.
                 if (!smpTeam.inTeam(player)) {
@@ -134,7 +129,6 @@ public class TeamCommand implements CommandExecutor {
                 }
                 player.sendMessage(ChatColor.GREEN + "You have left the team '" + teamName + "'.");
                 break;
-            // work
             case "message":
                 // Check if player is in team or not if not the code will stop here.
                 if (!smpTeam.inTeam(player)) {
@@ -155,7 +149,6 @@ public class TeamCommand implements CommandExecutor {
                 // send message to every team member.
                 smpTeam.sendTeamMessage(smpTeam.getTeam(player.getUniqueId()), messageBuilder.toString());
                 break;
-            // work
             case "list":
                 // Check if player specify the team name or not if not the code will stop here.
                 if (args.length < 2) {
@@ -170,6 +163,70 @@ public class TeamCommand implements CommandExecutor {
                     return true;
                 }
                 player.sendMessage(smpTeam.getMember(teamName).toString());
+                break;
+            case "home":
+                // Check if player is in team or not if not the code will stop here.
+                if (!smpTeam.inTeam(player)) {
+                    player.sendMessage(ChatColor.RED + "You are not in a team.");
+                    return false;
+                }
+                // Check team's home location , if it not exists the code perish!
+                if (!Sqlite.hasSetHome(smpTeam.getTeam(player))) {
+                    player.sendMessage(ChatColor.RED + "You didn't set team's home yet!");
+                    return false;
+                }
+                Location location = Sqlite.getHome(smpTeam.getTeam(player));
+                player.teleport(location);
+                break;
+            case "sethome":
+                // Check if player is in team or not if not the code will stop here.
+                if (!smpTeam.inTeam(player)) {
+                    player.sendMessage(ChatColor.RED + "You are not in a team.");
+                    return false;
+                }
+                Sqlite.setHome(player.getLocation(), smpTeam.getTeam(player));
+                break;
+            case "location":
+                Location locations = player.getLocation();
+                World world = locations.getWorld();
+                player.sendMessage(String.valueOf(world));
+                break;
+            case "tpa":
+                // Check if player is in team or not if not the code will stop here.
+                if (!smpTeam.inTeam(player)) {
+                    player.sendMessage(ChatColor.RED + "You are not in a team.");
+                    return false;
+                }
+                // Check if player specify the member name or not if not the code will stop here.
+                if (args.length < 2) {
+                    player.sendMessage(ChatColor.RED + "Please specify a member name.");
+                    return false;
+                }
+                // Check if the specified player and command sender is in same team or not if not this code perish!
+                Player tp = Bukkit.getPlayer(args[1]);
+                if (!smpTeam.sameTeam(tp,player)) {
+                    player.sendMessage(ChatColor.RED + "The specified player is not in your team!");
+                    return false;
+                }
+                try {
+                    tpa.put(tp, player);
+                    assert tp != null;
+                    tp.sendMessage("§a" + player.getName() + " send you a Tpa Request!");
+                    player.sendMessage("Tpa Request send!");
+                } catch (Exception var7) {
+                    var7.printStackTrace();
+                }
+                break;
+            case "tpaccept":
+                // Check if player is in team or not if not the code will stop here.
+                if (!smpTeam.inTeam(player)) {
+                    player.sendMessage(ChatColor.RED + "You are not in a team.");
+                    return false;
+                }
+                Player t = (Player) tpa.get(player);
+                t.teleport(player.getLocation());
+                player.sendMessage("successful!");
+                t.sendMessage("successful!");
                 break;
 
             default:

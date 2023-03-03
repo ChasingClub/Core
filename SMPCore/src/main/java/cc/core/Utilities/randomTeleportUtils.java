@@ -1,6 +1,5 @@
 package cc.core.Utilities;
 
-import cc.core.Core;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -39,8 +38,8 @@ public class randomTeleportUtils {
         double border = player.getWorld().getWorldBorder().getSize();
 
         // Get a random location within the default world border
-        int x = random.nextInt((int) border/2);
-        int z = random.nextInt((int) border/2);
+        int x = 0;
+        int z = 0;
         int y = 0;
 
         if(plugin.getConfig().getBoolean("rtp-radius-limit")){ //If they want to limit the distance

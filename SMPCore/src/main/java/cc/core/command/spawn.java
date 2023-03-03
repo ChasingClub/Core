@@ -1,5 +1,6 @@
 package cc.core.command;
 
+import cc.core.Core;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -8,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 import static cc.core.Core.plugin;
@@ -29,22 +31,20 @@ public class spawn implements CommandExecutor {
             Player player;
             player = (Player) sender;
 
-            // Check if player is in cooldown
-            if (!this.cooldown.containsKey(player.getUniqueId())) {
-                // if not then run command and set player cooldown
-                this.cooldown.put(player.getUniqueId(), System.currentTimeMillis());
-
                 // Get the world spawn location
-                Location worldSpawn = player.getWorld().getSpawnLocation();
+                if (player.getWorld().equals(Objects.requireNonNull(Core.plugin.getServer().getWorld("world")))) {
+                    Location worldSpawn = player.getWorld().getSpawnLocation();
 
-                // Teleport player to world spawn
-                player.teleport(worldSpawn);
-            } else { // if player is in cooldown
-                long time = System.currentTimeMillis() - this.cooldown.get(player.getUniqueId());
-                if (time < this.cmdCooldown * 1000L) {
-                    player.sendMessage(ChatColor.RED + "You can't use this command for " + (this.cmdCooldown * 1000L - time) + "seconds");
+                    // Teleport player to world spawn
+                    player.teleport(worldSpawn);
+                } else {
+                    Location worldSpawn = Objects.requireNonNull(player.getServer().getWorld("world")).getSpawnLocation();
+                    worldSpawn.setWorld(Objects.requireNonNull(Core.plugin.getServer().getWorld("world")));
+
+                    // Teleport player to nether spawn
+                    player.teleport(worldSpawn);
                 }
-            }
+
 
         } else {
             sender.sendMessage(ChatColor.RED + "This Command is only for a player");

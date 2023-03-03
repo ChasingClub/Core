@@ -12,12 +12,9 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
-public class playerDeath implements Listener {
-    private final Core plugin;
+import java.util.Objects;
 
-    public playerDeath(Core plugin) {
-        this.plugin = plugin;
-    }
+public class playerDeath implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
@@ -50,7 +47,8 @@ public class playerDeath implements Listener {
             e.setRespawnLocation(bedSpawn); // spawn player at bed location
         } else {
             // if player bed location has no bed setup
-            Location worldSpawn = e.getPlayer().getWorld().getSpawnLocation();
+            Location worldSpawn = Objects.requireNonNull(e.getPlayer().getServer().getWorld("world")).getSpawnLocation();
+            worldSpawn.setWorld(Objects.requireNonNull(Core.plugin.getServer().getWorld("world")));
             e.setRespawnLocation(worldSpawn);
         }
 

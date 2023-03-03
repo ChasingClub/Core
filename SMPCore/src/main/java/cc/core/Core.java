@@ -1,7 +1,9 @@
 package cc.core;
 
 import cc.core.SQliteManager.SQLite;
+import cc.core.Utilities.TabCompletion;
 import cc.core.command.*;
+import cc.core.events.playerDealDamage;
 import cc.core.events.playerDeath;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -30,14 +32,15 @@ public final class Core extends JavaPlugin {
         loadConfig();
     }
     private void registerCommands() {
-        Objects.requireNonNull(getCommand("team")).setExecutor(new TeamCommand());
+        Objects.requireNonNull(getCommand("team")).setTabCompleter(new TabCompletion());
         Objects.requireNonNull(getCommand("rtp")).setExecutor(new randomTeleport());
         Objects.requireNonNull(getCommand("spawn")).setExecutor(new spawn());
         Objects.requireNonNull(getCommand("bed")).setExecutor(new bed());
-        Objects.requireNonNull(getCommand("passive")).setExecutor(new pvpCommand());
+        Objects.requireNonNull(getCommand("pvp")).setExecutor(new pvp());
     }
     private void registerEvents() {
-        Objects.requireNonNull(getServer().getPluginManager()).registerEvents(new playerDeath(this), this);
+        Objects.requireNonNull(getServer().getPluginManager()).registerEvents(new playerDeath(), this);
+        getServer().getPluginManager().registerEvents(new playerDealDamage(), this);
     }
     private void loadConfig() {
         getConfig().options().copyDefaults();
