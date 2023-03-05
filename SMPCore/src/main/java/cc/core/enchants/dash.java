@@ -87,12 +87,12 @@ public class dash extends Enchantment {
     }
 
     @Override
-    public @NotNull Set<EquipmentSlot> getActiveSlots() {
+    public Set<EquipmentSlot> getActiveSlots() {
         return null;
     }
 
     @Override
-    public @NotNull String translationKey() {
+    public String translationKey() {
         return null;
     }
 }
