@@ -9,7 +9,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Objects;
 
 import static cc.core.SQliteManager.YamlStorage.generateYMLFolder;
@@ -17,7 +16,6 @@ import static cc.core.SQliteManager.YamlStorage.generateYMLFolder;
 public final class Core extends JavaPlugin {
     private final SQLite Sqlite = new SQLite(this);
     public static Core plugin;
-    public static ArrayList<Enchantment> pinont = new ArrayList<>();
 
     public Core() {
         plugin = this;
@@ -33,6 +31,7 @@ public final class Core extends JavaPlugin {
     }
     private void registerCommands() {
         Objects.requireNonNull(getCommand("team")).setTabCompleter(new TabCompletion());
+        Objects.requireNonNull(getCommand("team")).setExecutor(new team());
         Objects.requireNonNull(getCommand("rtp")).setExecutor(new randomTeleport());
         Objects.requireNonNull(getCommand("spawn")).setExecutor(new spawn());
         Objects.requireNonNull(getCommand("bed")).setExecutor(new bed());

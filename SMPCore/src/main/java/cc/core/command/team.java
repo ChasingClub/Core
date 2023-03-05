@@ -185,11 +185,11 @@ public class team implements CommandExecutor {
                     return false;
                 }
                 Sqlite.setHome(player.getLocation(), smpTeam.getTeam(player));
+                player.sendMessage(ChatColor.GREEN + "You have set team's home.");
                 break;
             case "location":
                 Location locations = player.getLocation();
-                World world = locations.getWorld();
-                player.sendMessage(String.valueOf(world));
+                player.sendMessage(String.valueOf(locations));
                 break;
             case "tpa":
                 // Check if player is in team or not if not the code will stop here.

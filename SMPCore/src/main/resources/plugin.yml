@@ -8,20 +8,15 @@ description: ChasingClub SMP Core
 commands:
   rtp:
     description: random Teleport
-    usage: /rtp
 
   spawn:
     description: Spawn
-    usage: /spawn
 
   team:
     description: Team
-    usage: /team
 
   bed:
     description: Bed
-    usage: /bed
 
   pvp:
     description: PvP
-    usage: /pvp
