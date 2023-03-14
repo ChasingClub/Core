@@ -34,7 +34,7 @@ public class bookOfFuture implements Listener {
             bookMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
             // give the book a lore
-            bookMeta.setLore(Arrays.asList("",ChatColor.WHITE + "Given to: " + ChatColor.YELLOW + playerName, "", ChatColor.GRAY + "Some say those that have been", ChatColor.GRAY + "given this been know the future outcome.\n", "", ChatColor.RED + "" + ChatColor.BOLD + "Special Artifact"));
+            bookMeta.setLore(Arrays.asList("",ChatColor.WHITE + "Given to: " + ChatColor.YELLOW + playerName, "", ChatColor.GRAY + "Within the pages of the Book of the Future lies the secrets of what is yet to come.", ChatColor.GRAY + "Those who possess it hold the power to shape their destiny,", ChatColor.GRAY + "but with great knowledge comes great responsibility.", "", ChatColor.RED + "" + ChatColor.BOLD + "Special Artifact"));
             bookOfFuture.setItemMeta(bookMeta);
             player.getInventory().addItem(bookOfFuture);
 

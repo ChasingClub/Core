@@ -38,17 +38,17 @@ public class randomTeleportUtils {
         double border = player.getWorld().getWorldBorder().getSize();
 
         // Get a random location within the default world border
-        int x = 0;
-        int z = 0;
+        int x = 1000;
+        int z = 1000;
         int y = 0;
 
         if(plugin.getConfig().getBoolean("rtp-radius-limit")){ //If they want to limit the distance
-            x = random.nextInt(plugin.getConfig().getInt("rtp-radius")) + 1000;
-            z = random.nextInt(plugin.getConfig().getInt("rtp-radius")) + 1000;
+            x += random.nextInt(plugin.getConfig().getInt("rtp-radius"));
+            z += random.nextInt(plugin.getConfig().getInt("rtp-radius"));
             y = 150;
         }else if(!plugin.getConfig().getBoolean("rtp-radius-limit")){ //If they don't
-            x = random.nextInt(25000) + 1000; //25000 is default
-            z = random.nextInt(25000) + 1000;
+            x += random.nextInt(25000); //25000 is default
+            z += random.nextInt(25000);
             y = 150;
         }
 
