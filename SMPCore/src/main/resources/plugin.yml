@@ -10,13 +10,19 @@ commands:
     description: random Teleport
 
   spawn:
-    description: Spawn
+    description: Beck to server spawn
 
   team:
-    description: Team
+    description: Team up with friends
 
   bed:
-    description: Bed
+    description: Go back to your bed
 
   pvp:
-    description: PvP
+    description: toggle pvp off/on
+
+  srcTake:
+    description: get secret item that been developing
+
+  setHealth:
+    description: set health of player

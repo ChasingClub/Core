@@ -54,4 +54,7 @@ public class playerDeath implements Listener {
 
     }
 
+    public void onPlayerDeadAndHasArtifact(Player player) {
+    }
+
 }
