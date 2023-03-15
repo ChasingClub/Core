@@ -8,12 +8,14 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 
 import static cc.core.Core.fixer;
+import static cc.core.Core.plugin;
 
 public class secretTake implements CommandExecutor {
     @Override
@@ -24,14 +26,16 @@ public class secretTake implements CommandExecutor {
             if (args.length == 0) {
                 p.sendMessage("You must specify an Item!");
             } else if (p.isOp()) {
-                if (args[0].equalsIgnoreCase("bouncingbow")) {
+                if (args[0].equalsIgnoreCase("bouncingBow")) {
                     bouncingBow(p);
-                } else if (args[0].equalsIgnoreCase("maxedbow")) {
+                } else if (args[0].equalsIgnoreCase("maxedBow")) {
                     MaxedBow(p);
-                } else if (args[0].equalsIgnoreCase("phantomarrow")) {
-                    PhantomArrow(p);
+                } else if (args[0].equalsIgnoreCase("phantomBow")) {
+                    PhantomBow(p);
                 } else if (args[0].equalsIgnoreCase("dash")) {
                     Dasher(p);
+                } else if (args[0].equalsIgnoreCase("bookOffFuture")) {
+                    BookOfFuture(p);
                 } else {
                     p.sendMessage("That item does not exist!");
                 }
@@ -44,6 +48,8 @@ public class secretTake implements CommandExecutor {
 
         return true;
     }
+
+    // Custom Items
 
     private void bouncingBow(Player p) {
         ItemStack bouncingBow = new ItemStack(Material.BOW, 1);
@@ -118,20 +124,52 @@ public class secretTake implements CommandExecutor {
 
     }
 
-    private void PhantomArrow(Player p) {
+    private void PhantomBow(Player p) {
 
-        ItemStack PhantomArrow = new ItemStack(Material.ARROW, 1);
+        ItemStack PhantomBow = new ItemStack(Material.BOW, 1);
 
-        PhantomArrow.addEnchantment(Core.phantomArrow, 1);
+        PhantomBow.addEnchantment(Core.phantomArrow, 1);
 
-        ItemMeta PhantomArrowMeta = PhantomArrow.getItemMeta();
+        ItemMeta PhantomBowMeta = PhantomBow.getItemMeta();
 
-        PhantomArrowMeta.setLore(Arrays.asList(fixer + Core.phantomArrow.getName()));
+        PhantomBowMeta.setLore(Arrays.asList(fixer + Core.phantomArrow.getName()));
 
-        PhantomArrow.setItemMeta(PhantomArrowMeta);
+        PhantomBow.setItemMeta(PhantomBowMeta);
 
-        p.getInventory().addItem(PhantomArrow);
+        p.getInventory().addItem(PhantomBow);
 
+    }
+
+    private void BookOfFuture(Player p) {
+        Player player = p.getPlayer();
+        String playerName = player.getName();
+
+        if (!plugin.getConfig().getBoolean("beta-player." + playerName + ".received")) {
+            // give the player a Book of Future
+            ItemStack book = new ItemStack(Material.BOOK);
+
+            // give a book of future to the player with custom name and glint effect
+            ItemStack bookOfFuture = new ItemStack(Material.BOOK, 1);
+            ItemMeta bookMeta = bookOfFuture.getItemMeta();
+
+            bookMeta.setDisplayName(ChatColor.AQUA + "Book of Future");
+            bookMeta.addEnchant(Enchantment.LUCK, 1, true);
+            bookMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            bookMeta.setCustomModelData(1);
+
+            // give the book a lore
+            bookMeta.setLore(Arrays.asList("",ChatColor.WHITE + "Given to: " + ChatColor.YELLOW + playerName, "", ChatColor.GRAY + "With the Book of the Future in hand,", ChatColor.GRAY + "beta players hold the keys to unlock", ChatColor.GRAY + "secrets of what's yet to come.", "", ChatColor.RED + "" + ChatColor.BOLD + "Special Artifact"));
+            bookOfFuture.setItemMeta(bookMeta);
+            player.getInventory().addItem(bookOfFuture);
+
+            // send a welcome message to the player
+            player.sendMessage(ChatColor.YELLOW + "Welcome " + playerName + "! Since you have registered for the beta, " +
+                    "you have received the " + ChatColor.AQUA + ChatColor.BOLD + "Book of Future" + ChatColor.YELLOW + "!");
+
+            // update the config
+            plugin.getConfig().set("beta-player." + playerName + ".received", true);
+            plugin.saveConfig();
+        }
     }
 
 }

@@ -32,6 +32,7 @@ public class bookOfFuture implements Listener {
             bookMeta.setDisplayName(ChatColor.AQUA + "Book of Future");
             bookMeta.addEnchant(Enchantment.LUCK, 1, true);
             bookMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            bookMeta.setCustomModelData(1);
 
             // give the book a lore
             bookMeta.setLore(Arrays.asList("",ChatColor.WHITE + "Given to: " + ChatColor.YELLOW + playerName, "", ChatColor.GRAY + "With the Book of the Future in hand,", ChatColor.GRAY + "beta players hold the keys to unlock", ChatColor.GRAY + "secrets of what's yet to come.", "", ChatColor.RED + "" + ChatColor.BOLD + "Special Artifact"));
