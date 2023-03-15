@@ -34,7 +34,7 @@ public class secretTake implements CommandExecutor {
                     PhantomBow(p);
                 } else if (args[0].equalsIgnoreCase("dash")) {
                     Dasher(p);
-                } else if (args[0].equalsIgnoreCase("bookOffFuture")) {
+                } else if (args[0].equalsIgnoreCase("bookOfFuture")) {
                     BookOfFuture(p);
                 } else {
                     p.sendMessage("That item does not exist!");
