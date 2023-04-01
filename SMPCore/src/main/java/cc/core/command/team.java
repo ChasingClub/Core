@@ -156,12 +156,20 @@ public class team implements CommandExecutor {
                     return true;
                 }
 
+                player.sendMessage(smpTeam.getTeamList().toString());
+                break;
+            case "check":
+                if (args.length < 2) {
+                    player.sendMessage(ChatColor.RED + "Please specify a team name.");
+                    return true;
+                }
+
                 teamName = args[1];
-                // Check if the input team is exists or not if not the code will stop here.
                 if (!smpTeam.teamExist(teamName)) {
                     player.sendMessage(ChatColor.RED + "Team not found.");
                     return true;
                 }
+
                 player.sendMessage(smpTeam.getMember(teamName).toString());
                 break;
             case "home":

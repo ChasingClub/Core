@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static cc.core.Core.plugin;
 
@@ -63,6 +64,10 @@ public class SMPTeam {
                 onlinePlayer.sendMessage(ChatColor.GREEN + message);
             }
         }
+    }
+
+    public List<String> getTeamList() {
+        return playerTeams.values().parallelStream().collect(Collectors.toList());
     }
     public boolean sameTeam(Player player1, Player player2) {
         return getTeam(player1).equals(getTeam(player2));
